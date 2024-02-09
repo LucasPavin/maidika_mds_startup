@@ -18,6 +18,7 @@ import DocumentView from '../screens/DocumentView/DocumentView';
 import ScanDocument from '../screens/ScanDocument/ScanDocument';
 import Treatmen from '../screens/Treatmen/Treatmen';
 import AddTreatmen from '../screens/Treatmen/AddTreatmen/AddTreatmen';
+import ValidAddTreatmen from '../screens/Treatmen/ValidAddTreatmen/ValidAddTreatmen';
 
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -191,6 +192,13 @@ const AppNavigation = () => {
                     <Stack.Screen
                         name="AddTreatmen"
                         component={AddTreatmen}
+                        options={{
+                            headerShown: false
+                        }}
+                    />
+                    <Stack.Screen
+                        name="ValidAddTreatmen"
+                        component={ValidAddTreatmen}
                         options={{
                             headerShown: false
                         }}

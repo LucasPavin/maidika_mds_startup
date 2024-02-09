@@ -10,6 +10,9 @@ export const styles = StyleSheet.create({
         width: 40,
         height: 40,
     },
+    containerForm : {
+        marginBottom: 120,
+    },
     imageSelectContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -65,9 +68,54 @@ export const styles = StyleSheet.create({
 
     },
     modalContact : {
-        height: '70%',
-        backgroundColor: Colors.blue,
+        height: '80%',
+        backgroundColor: Colors.white,
         padding: 20,
         borderRadius: 10,
+    },
+    containerDescribe : {
+        marginBottom: 20,
+    },
+    chooseConfiance : {
+        fontWeight: 'bold',
+        fontSize: 15,
+        textAlign: 'center',
+    },
+    chooseConfianceDescribe : {
+        textAlign: 'center',
+        fontStyle: 'italic',
+    },
+    contactItem : {
+        borderBottomWidth: 1,
+        borderColor: Colors.lightGrey,
+        paddingVertical: 15,
+    },
+    contactSelected : {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    contactSelectedName :{
+        width: '55%',
+        height: 45,
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        backgroundColor: Colors.lightGrey,
+        justifyContent: 'center',
+    },
+    containerDateToStart :{
+        flexDirection: 'row',
+    },
+    containerDayStart : {
+        width: '50%',
+    },
+    containerTimeStart : {
+        width: '50%',
+    },
+    chooseStartDay :{
+        width: '100%',
+        backgroundColor: Colors.lightGrey,
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 });

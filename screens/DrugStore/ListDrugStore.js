@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Alert, FlatList, Text, TextInput, ActivityIndicator, Image, TouchableOpacity, Linking } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Alert, FlatList, Text, TextInput, ActivityIndicator, Image, TouchableOpacity, Linking, Animated } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import pharmaciesData from './json/pharmacies.json'
@@ -155,6 +155,9 @@ const ListDrugStore = ({navigation}) => {
   // Nombre de kilomètres autour de l'utilisateur pour trouver les pharmacies
   const perimeter = 5;
 
+  // Animation sur le texte "Géolocalisation en cours..."
+  const fadeAnim = useRef(new Animated.Value(0)).current; 
+
 
   useEffect(() => {
     (async () => {
@@ -202,6 +205,32 @@ const ListDrugStore = ({navigation}) => {
     }
   }, [userPosition]);
 
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(
+          fadeAnim,
+          {
+            toValue: 1,
+            duration: 2000, 
+            useNativeDriver: true, 
+          }
+        ),
+        Animated.timing(
+          fadeAnim,
+          {
+            toValue: 0, 
+            duration: 2000, 
+            useNativeDriver: true, 
+          }
+        ),
+      ]),
+      {
+        iterations: -1, 
+      }
+    ).start(); 
+  }, [fadeAnim]) 
+
   return (
     <>
       <Header/>
@@ -229,7 +258,16 @@ const ListDrugStore = ({navigation}) => {
         <View style={styles.containerBottom}>
           {
             isLoading ? 
-              <ActivityIndicator size="large" color="#496699" /> 
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                <ActivityIndicator size="large" color="#496699" /> 
+                <Animated.Text
+                  style={{
+                    opacity: fadeAnim,  // Relier l'opacité à l'état animé
+                    fontSize: 28,
+                  }}>
+                  Géolocalisation en cours...
+                </Animated.Text>
+              </View>
               : 
               <>
                 <Text style={styles.results}>{pharmacies.length} pharmacies trouvées à moins de {perimeter}km :</Text>
