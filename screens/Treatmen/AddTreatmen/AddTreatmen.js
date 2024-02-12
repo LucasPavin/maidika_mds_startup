@@ -9,8 +9,9 @@ import Colors from '../../../constants/Colors';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import CheckBoxMultiDay from '../../../components/CheckBoxMultiDay';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { createMedicationsTable, insertMedication } from '../../../database/sqlite-database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const AddTreatmen = ({navigation}) => {
 
@@ -18,15 +19,27 @@ const AddTreatmen = ({navigation}) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const images = [
     { id: 1, source: require('../../../assets/treatmen/gellule.png') },
-    { id: 2, source: require('../../../assets/treatmen/gellule.png') },
-    { id: 3, source: require('../../../assets/treatmen/gellule.png') },
-    { id: 4, source: require('../../../assets/treatmen/gellule.png') },
+    { id: 2, source: require('../../../assets/treatmen/comprimes.png') },
+    { id: 3, source: require('../../../assets/treatmen/liquide.png') },
+    { id: 4, source: require('../../../assets/treatmen/creme.png') },
   ];
 
-  // Selection de contact
+  const [medicationName, setMedicationName] = useState('');
+  const [medicationType, setMedicationType] = useState('');
   const [contacts, setContacts] = useState([]);
   const [selectedContact, setSelectedContact] = useState(null);  
   const [isModalVisible, setModalVisible] = useState(false);
+  const [dosage, setDosage] = useState('');
+  const [commentDrug, setCommentDrug] = useState('');
+  const [dateToStart, setDateToStart] = useState(new Date());
+  const [formattedDateToStart, setFormattedDateToStart] = useState("");
+  const [timeToStart, setTimeToStart] = useState(new Date());
+  const [dateToEnd, setDateToEnd] = useState(new Date());
+  const [formattedDateToEnd, setFormattedDateToEnd] = useState("");
+  const [isMultiDay, setIsMultiDay] = useState(false);
+  const [selectedOption, setSelectedOption] = useState('');  
+  const [optionModalVisible, setOptionModalVisible] = useState(false);
+  const [user, setUser] = useState(null);
   
   // Demande de permission pour accéder aux contacts dans le useEffect
   useEffect(() => {
@@ -39,60 +52,132 @@ const AddTreatmen = ({navigation}) => {
 
         if (data.length > 0) {
           setContacts(data);
-          // console.log(data);
         }
       }
     })();
   }, []);
-  // Activate or desactivate the modal
+
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
-  // Render contact
+
   let sortedContacts = [...contacts].sort((a, b) => {
     if (a.name && b.name) {
       return a.name.localeCompare(b.name);
     } else if (a.name) {
-      return -1; // a vient avant b
+      return -1;
     } else if (b.name) {
-      return 1; // b vient avant a
+      return 1;
     } else {
-      return 0; // a et b sont égaux
+      return 0;
     }
   });
+
+  const formatPhoneNumber = (phoneNumber) => {
+    const cleaned = ('' + phoneNumber).replace(/\D/g, '');
+    const match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/);
+    if (match) {
+      return `${match[1]}${match[2]}${match[3]}`;
+    }
+    return phoneNumber;
+  };
+
+  const handleSelectContact = (item) => {
+    const formattedPhoneNumber = item.phoneNumbers ? formatPhoneNumber(item.phoneNumbers[0].number) : '';
+    setSelectedContact({ ...item, formattedPhoneNumber: formattedPhoneNumber });
+    toggleModal();
+  };
 
   const renderContact = ({ item }) => (
     <TouchableOpacity
       style={styles.contactItem}
       onPress={() => {
-        setSelectedContact(item);
+        // setSelectedContact(item);
         toggleModal();
+        handleSelectContact(item)
       }}
     >
       <View>
         <Text style={{ color: item.id === selectedContact?.id ? Colors.teal : Colors.black , fontWeight: "bold"}}>
           {item.name}
-          {/* 
-          * For displaying phone number
-          * {item.phoneNumbers ? `${item.phoneNumbers[0].number}` : ''} 
-          */}
         </Text>
       </View>
     </TouchableOpacity>
   );
 
-  // Picker
-  const [selectedValue, setSelectedValue] = useState('option1');
-
   const handlePress = (id) => {
     setSelectedImage(id);
+    switch (id) {
+      case 1:
+        setMedicationType('Géllule');
+        break;
+      case 2:
+        setMedicationType('Comprimé');
+        break;
+      case 3:
+        setMedicationType('Liquide');
+        break;
+      case 4:
+        setMedicationType('Crème');
+        break;
+      default:
+        setMedicationType('');
+    }
   };
 
-  // Create date
-  const [dateToStart, setDateToStart] = useState(new Date());
-  const [timeToStart, setTimeToStart] = useState(new Date());
-  const [dateToEnd, setDateToEnd] = useState(new Date());
-  const [isMultiDay, setIsMultiDay] = useState(false);
+  const options = [
+    'Avant le repas',
+    'Pendant le repas',
+    'Après le repas',
+  ];
+
+  const handleOptionSelect = (option) => {
+    setSelectedOption(option);
+    setOptionModalVisible(false);
+  };
+
+  useEffect(() => {
+    createMedicationsTable()
+      .then(() => console.log('Table de médicaments créée avec succès'))
+      .catch(error => console.error('Erreur lors de la création de la table de médicaments : ', error));
+  }, []);
+
+  useEffect(() => {
+      const fetchUser = async () => {
+        const storedUser = await AsyncStorage.getItem('user');
+        setUser(JSON.parse(storedUser));
+      };
+      fetchUser();
+  }, []);
+
+  const handleSubmit = async () => {
+    // userId doit être défini
+    if (!user) {
+      console.error('User not found');
+      return;
+    
+    }
+    const userId = user.id;
+  
+    insertMedication(
+      userId,
+      selectedOption,
+      medicationName,
+      dosage,
+      medicationType,
+      timeToStart,
+      formattedDateToStart,
+      formattedDateToEnd,
+      selectedContact.formattedPhoneNumber,
+      commentDrug
+    )
+    .then(result => {
+      console.log('Insertion réussie : ', result);
+      navigation.navigate('ValidAddTreatmen');
+    })
+    .catch(error => console.error('Erreur d\'insertion : ', error));
+  };
 
   return (
     <View style={styles.container}>
@@ -105,6 +190,7 @@ const AddTreatmen = ({navigation}) => {
           </TouchableOpacity>
       </View>
       <ScrollView style={styles.containerForm}>
+          <Text>Selectionné une image selon le type de médicament</Text>
         <View style={styles.imageSelectContainer}>
           {images.map((image) => (
             <TouchableOpacity 
@@ -123,6 +209,8 @@ const AddTreatmen = ({navigation}) => {
             <TextInput
               style={styles.input}
               placeholder="Doliprane.."
+              value={medicationName}
+              onChangeText={setMedicationName}
             />
           </View>
 
@@ -133,45 +221,92 @@ const AddTreatmen = ({navigation}) => {
                 style={styles.input}
                 placeholder="Nombre de comprimés"
                 keyboardType="numeric"
+                value={dosage}
+                onChangeText={setDosage}
               />
             </View>
             <View style={styles.secondInputRight}>
               <Text style={styles.textInput}>Type de médicament</Text>
               <View style={styles.containerInput}>
-                {/* <Picker
-                  selectedValue={selectedValue}
-                  onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
-                style={{...styles.input, zIndex: 1}}
-                >
-                  <Picker.Item label="Option 1" value="option1" />
-                  <Picker.Item label="Option 2" value="option2" />
-                  <Picker.Item label="Option 1" value="option1" />
-                  <Picker.Item label="Option 2" value="option2" />
-                  <Picker.Item label="Option 1" value="option1" />
-                  <Picker.Item label="Option 2" value="option2" />
-                  {/* Ajoutez d'autres options ici */}
-                {/* </Picker> */}
+              <TextInput
+                style={styles.input}
+                editable={false}
+                value={medicationType}
+                placeholder="Sélectionnez un type"
+              />
               </View>
             </View>
           </View>
+          <View style={styles.containerSelector}>
+            <TouchableOpacity 
+              style={styles.selector} 
+              onPress={() => setOptionModalVisible(true)}
+            >
+            <Image 
+                source={require('../../../assets/treatmen/restaurant.png')} 
+                resizeMode="contain"
+                style={{
+                    width: 20,
+                    height: 20,
+                }}
+            />
+              <Text style={styles.text}>{selectedOption || "Choisir un moment"}</Text>
+            </TouchableOpacity>
+
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={optionModalVisible}
+              onRequestClose={() => {
+                setOptionModalVisible(!optionModalVisible);
+              }}
+            >
+              <View style={styles.modalOverlay}>
+                <View style={styles.modalView}>
+                  {options.map((option, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={styles.optionItem}
+                      onPress={() => handleOptionSelect(option)}
+                    >
+                      <Text style={styles.optionText}>{option}</Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+            </Modal>
+          </View>
+
           <View style={styles.containerDateToStart}>
             <View style={styles.containerDayStart}>
               <Text style={styles.textInput}>Date de début</Text>
-              <DateTimePicker
-                value={dateToStart}
-                mode="date"
-                display="default"
-                style={styles.chooseStartDay}
-                onChange={(event, date) => {setDateToStart(date)}}
-              />
+              <View style={styles.fullWidth}>
+                <DateTimePicker
+                  value={dateToStart}
+                  mode="date"
+                  display="default"
+                  style={styles.chooseStartDay}
+                  onChange={(event, selectedDate) => {
+                    if (selectedDate) {
+                      setDateToStart(selectedDate);
+                      const formatted = selectedDate.toISOString().split('T')[0];
+                      setFormattedDateToStart(formatted);
+                    }
+                  }}
+                />
+              </View>
             </View>
             <View style={styles.containerTimeStart}>
               <Text style={styles.textInput}>Heure de rappel</Text>
               <DateTimePicker
-                value={dateToStart}
+                value={timeToStart}
                 mode="time"
                 display="default"
-                onChange={(event, date) => {setDateToStart(date)}}
+                onChange={(event, selectedTime) => {
+                  if (selectedTime) {
+                    setTimeToStart(selectedTime); 
+                  }
+                }}
               />
             </View>
           </View>
@@ -183,9 +318,14 @@ const AddTreatmen = ({navigation}) => {
                 mode="date"
                 display="default"
                 onChange={(event, date) => {
-                  setDateToEnd(date);
-                  let dateInFrench = format(date, 'dd MMMM yyyy', { locale: fr });
-                  console.log(dateInFrench);
+                  if (date <= dateToStart) {
+                    alert('La date de fin doit être après la date de début');
+                    return;
+                  } else if (date > dateToStart) {
+                      setDateToEnd(date);
+                      const formatted = date.toISOString().split('T')[0];
+                      setFormattedDateToEnd(formatted);
+                  }
                 }}
               />
             </View>
@@ -232,11 +372,13 @@ const AddTreatmen = ({navigation}) => {
             <TextInput
               style={styles.input}
               placeholder="Commentaire"
+              value={commentDrug}
+              onChangeText={setCommentDrug}
             />
           </View>
         </View>
         <View style={styles.containerBtn}>
-          <Button type='blue' onPress={() => navigation.navigate('ValidAddTreatmen')}>Ajouter</Button>
+          <Button type='blue' onPress={handleSubmit}>Ajouter</Button>
         </View>
       </ScrollView>
       

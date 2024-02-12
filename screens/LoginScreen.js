@@ -266,6 +266,9 @@ const LoginScreen = () => {
                     if (rememberMe) {
                         AsyncStorage.setItem('isLoggedIn', 'true');
                     }
+                    
+                    AsyncStorage.setItem('user', JSON.stringify(user));
+
 
                     navigation.replace('Home', { user });
                 } else {

@@ -104,7 +104,51 @@ export const checkUserCredentials = (email, password) => {
     });
 };
 
-
-
-
-
+// function to create 'medications' table for AddTreatment screen.
+export const createMedicationsTable = () => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                `CREATE TABLE IF NOT EXISTS medications (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    userId INTEGER,
+                    imageId INTEGER,
+                    medicationName TEXT,
+                    dosage TEXT,
+                    medicationType TEXT,
+                    timeToTake TEXT,
+                    startDate TEXT,
+                    endDate TEXT,
+                    phoneNumber TEXT,
+                    comment TEXT,
+                    FOREIGN KEY (userId) REFERENCES users(id)
+                );`,
+                [],
+                () => {
+                    resolve('Medications table created successfully');
+                },
+                (_, error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+// Function to insert data into 'medications' table
+export const insertMedication = (userId, imageId, medicationName, dosage, medicationType, timeToTake, startDate, endDate, phoneNumber, comment) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                `INSERT INTO medications (userId, imageId, medicationName, dosage, medicationType, timeToTake, startDate, endDate, phoneNumber, comment) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                [userId, imageId, medicationName, dosage, medicationType, timeToTake, startDate, endDate, phoneNumber, comment],
+                (_, result) => {
+                    resolve(result);
+                },
+                (_, error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};

@@ -55,7 +55,7 @@ export const styles = StyleSheet.create({
     secondInput : {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        gap: 20,
+        gap: 10,
         marginBottom: 20,
     },
     secondInputLeft : {
@@ -105,17 +105,80 @@ export const styles = StyleSheet.create({
     },
     containerDateToStart :{
         flexDirection: 'row',
+        justifyContent: 'space-between',
+        gap: 10,
+        marginBottom: 20,
     },
     containerDayStart : {
-        width: '50%',
+        width: '48%',
     },
-    containerTimeStart : {
-        width: '50%',
-    },
-    chooseStartDay :{
+    fullWidth : {
         width: '100%',
         backgroundColor: Colors.lightGrey,
         justifyContent: 'center',
         alignItems: 'center',
-    }
+    },
+    containerTimeStart : {
+        width: '48%',
+    },
+    chooseStartDay :{
+    },
+    containerSelector : {
+        marginVertical: 10,
+    },
+    selector: {
+        backgroundColor: Colors.lightGrey,
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        borderRadius: 20,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        width: '100%',
+        elevation: 3, // Ajouter de l'ombre sur Android
+        shadowColor: '#000', // Ajouter de l'ombre sur iOS
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+      },
+      text: {
+        // Ajuster selon le texte
+      },
+      modalView: {
+        margin: 20,
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 35,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5
+      },  
+      modalOverlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: "100%",
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Arrière-plan semi-transparent
+        justifyContent: 'center',
+        alignItems: 'center',
+      },
+      optionItem: {
+        // Ajuster le style des options
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderColor: '#E8E8E8',
+        width: '100%',
+        alignItems: 'center',
+      },
+      optionText: {
+        // Ajuster le texte des options
+      },
 });

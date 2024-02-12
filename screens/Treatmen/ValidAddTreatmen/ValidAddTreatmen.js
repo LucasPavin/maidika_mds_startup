@@ -4,7 +4,7 @@ import React from 'react'
 import Button from '../../../components/Button';
 import { styles } from './styles';
 
-const ValidAddTreatmen = () => {
+const ValidAddTreatmen = ({navigation}) => {
   return (
     <View style={styles.container}>
         <LottieView
@@ -18,7 +18,7 @@ const ValidAddTreatmen = () => {
             <Text style={{fontSize: 20, fontWeight: 'bold', color: 'white', marginTop: 20}}>Votre traitement a été ajouté</Text>
         </View>
         <View>
-            <Button onPress={() => {}}>Vos traitements</Button>
+            <Button onPress={() => navigation.navigate("Traitement")}>Vos traitements</Button>
         </View>
     </View>
   )

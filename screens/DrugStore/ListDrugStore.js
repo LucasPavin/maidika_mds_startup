@@ -6,7 +6,7 @@ import pharmaciesData from './json/pharmacies.json'
 import Button from '../../components/Button'
 import Header from '../../components/Header';
 import styles from './styles';
-
+import LottieView from 'lottie-react-native';
 
 const proj4 = require('proj4');
 const mercator = 'EPSG:3857';
@@ -96,6 +96,11 @@ export const parseDayRange = (dayRange) => {
   }
 };
 export const getMinutesFromTime = (timeString) => {
+  if (!timeString) {
+    console.error('timeString is undefined');
+    return;
+  }
+
   const [hours, minutes] = timeString.split(':').map(Number);
   return hours * 60 + minutes;
 };
@@ -259,7 +264,13 @@ const ListDrugStore = ({navigation}) => {
           {
             isLoading ? 
               <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                <ActivityIndicator size="large" color="#496699" /> 
+                <LottieView
+                    source={require('../../assets/animations/pharmacy.json')}
+                    autoPlay={true}
+                    loop={false}
+                    speed={1} 
+                    style={{width: 100, height: 100}}
+                />
                 <Animated.Text
                   style={{
                     opacity: fadeAnim,  // Relier l'opacité à l'état animé
