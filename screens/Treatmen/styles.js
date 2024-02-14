@@ -74,6 +74,42 @@ export const styles = StyleSheet.create({
         bottom: 0,
         width: 20,
         height: 20,
+    },
+    medicationsContainer: {
+        marginVertical: 20,
+    },
+    medicationContainer : {
+        flex: 1,
+        flexDirection: 'row',
+        paddingBottom: 20,
+        columnGap: 10,
+    },
+    medicationContainerImage : {
+        height: 60,
+        width: 60,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#B2B2B24D',
+        borderRadius: 20,
+    },
+    medicationContainerContent: {
+        width: 150,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'flex-start',   
+    },
+    medicationContainerContentName: {
+        fontWeight: '600',
+        fontSize: 16,
+    },
+    medicationContainerTime : {
+        width: 50,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    medicationContainerTimeTake: {
+        fontSize: 16,
     }
 });
 

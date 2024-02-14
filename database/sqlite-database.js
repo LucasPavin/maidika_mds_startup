@@ -2,7 +2,6 @@ import * as SQLite from 'expo-sqlite';
 
 const db = SQLite.openDatabase('Maidika.db');
 
-//FOR REGISTERING USERS.
 //function to create 'users' table for Register screen.
 export const createUserTable = () => {
     return new Promise((resolve, reject) => {
@@ -112,7 +111,7 @@ export const createMedicationsTable = () => {
                 `CREATE TABLE IF NOT EXISTS medications (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
                     userId INTEGER,
-                    imageId INTEGER,
+                    whenTake INTEGER,
                     medicationName TEXT,
                     dosage TEXT,
                     medicationType TEXT,
@@ -125,7 +124,18 @@ export const createMedicationsTable = () => {
                 );`,
                 [],
                 () => {
-                    resolve('Medications table created successfully');
+                    tx.executeSql(
+                        'ALTER TABLE medications RENAME COLUMN imageId TO whenTake;',
+                        [],
+                        (tx, results) => {
+                            console.log('Column renamed successfully');
+                            resolve(results);
+                        },
+                        (tx, error) => {
+                            console.log('Error renaming column:', error);
+                            reject(error);
+                        }
+                    );
                 },
                 (_, error) => {
                     reject(error);
@@ -135,17 +145,41 @@ export const createMedicationsTable = () => {
     });
 };
 // Function to insert data into 'medications' table
-export const insertMedication = (userId, imageId, medicationName, dosage, medicationType, timeToTake, startDate, endDate, phoneNumber, comment) => {
+export const insertMedication = (userId, whenTake, medicationName, dosage, medicationType, timeToTake, startDate, endDate, phoneNumber, comment) => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
             tx.executeSql(
-                `INSERT INTO medications (userId, imageId, medicationName, dosage, medicationType, timeToTake, startDate, endDate, phoneNumber, comment) 
+                `INSERT INTO medications (userId, whenTake, medicationName, dosage, medicationType, timeToTake, startDate, endDate, phoneNumber, comment) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-                [userId, imageId, medicationName, dosage, medicationType, timeToTake, startDate, endDate, phoneNumber, comment],
+                [userId, whenTake, medicationName, dosage, medicationType, timeToTake, startDate, endDate, phoneNumber, comment],
                 (_, result) => {
                     resolve(result);
                 },
                 (_, error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+export const fetchMedications = (userId) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM medications WHERE userId = ?',
+                [userId],
+                (tx, results) => {
+                    // console.log('success fetching medications:', results.rows.length);
+                    var medications = [];
+                    for (let i = 0; i < results.rows.length; ++i) {
+                        medications.push(results.rows.item(i));
+                        console.log('medications:', medications);
+                    }
+                    resolve(medications);
+                },
+                (tx, error) => {
+                    console.log('Fetch error:', error);
                     reject(error);
                 }
             );

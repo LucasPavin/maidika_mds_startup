@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ScrollView, View, Text, Dimensions, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { format, addDays, subDays, isToday, isSameDay } from 'date-fns';
+import { format, addDays, subDays, isToday, isSameDay, startOfWeek, eachDayOfInterval } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import Header from '../../components/Header';
 import { styles } from './styles';
+import { fetchMedications } from '../../database/sqlite-database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import LottieView from 'lottie-react-native';
 
 const { width } = Dimensions.get('window');
 const DAY_WIDTH = width / 5; // Pour afficher 5 jours sur l'écran
@@ -11,6 +14,9 @@ const DAY_WIDTH = width / 5; // Pour afficher 5 jours sur l'écran
 const Treatment = ({navigation}) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [user, setUser] = useState(null);
+  const [medication, setMedications] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const scrollViewRef = useRef();
 
   const daysToLoad = 2;
@@ -18,6 +24,34 @@ const Treatment = ({navigation}) => {
   const handleDayPress = (day) => {
     setSelectedDate(day);
   };
+  const isDateWithinInterval = (date, startDate, endDate) => {
+    return startDate <= date && date <= endDate;
+  };
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setIsLoading(true);
+  
+          const storedUser = await AsyncStorage.getItem('user');
+          if (!storedUser) {
+              console.log('No user found');
+              return;
+          }
+          const user = JSON.parse(storedUser);
+          setUser(user);
+          const meds = await fetchMedications(user.id);
+          setMedications(meds);      
+          setIsLoading(false);
+  
+      } catch (error) {
+          console.error('Error fetching user or medications:', error);     
+          setIsLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
 
   // Fonction pour générer des jours autour de la date donnée
@@ -29,9 +63,7 @@ const Treatment = ({navigation}) => {
     return newDays;
   };
 
-  const [days, setDays] = useState(generateDays(currentDate));
-
-   const onScrollEnd = (e) => {
+  const onScrollEnd = (e) => {
     const contentOffsetX = e.nativeEvent.contentOffset.x;
     const currentDayIndex = Math.round(contentOffsetX / DAY_WIDTH);
     const newCurrentDate = days[currentDayIndex];
@@ -61,6 +93,23 @@ const Treatment = ({navigation}) => {
     }
   }, [days]);
 
+  const [days, setDays] = useState(() => {
+    const startDay = startOfWeek(new Date(), { weekStartsOn: 1 });
+    return eachDayOfInterval({ start: startDay, end: addDays(startDay, 6) });
+  });
+
+  useEffect(() => {
+    const startDay = startOfWeek(new Date(), { weekStartsOn: 1 });
+    setDays(eachDayOfInterval({ start: startDay, end: addDays(startDay, 6) }));
+  }, []);
+
+
+  const medicationImages = {
+    'Comprimé': require('../../assets/treatmen/comprimes.png'),
+    'Géllule': require('../../assets/treatmen/gellule.png'),
+    'Liquide': require('../../assets/treatmen/liquide.png'),
+    'Crème': require('../../assets/treatmen/creme.png'),
+  };
   return (
     <>
       <Header />
@@ -106,6 +155,55 @@ const Treatment = ({navigation}) => {
                     }
                 </Text>
             )}
+            <View>
+              {
+                isLoading ? 
+                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                  <LottieView
+                      source={require('../../assets/animations/medecine.json')}
+                      autoPlay={true}
+                      loop={false}
+                      speed={1} 
+                      style={{width: 100, height: 100}}
+                  />
+                </View>
+                :
+                <View style={styles.medicationsContainer}>
+                  <ScrollView>
+                    {medication && medication
+                      .filter(med => {
+                        const startDate = new Date(med.startDate);
+                        if (med.endDate) {
+                          const endDate = new Date(med.endDate);
+                          endDate.setHours(23, 59, 59, 999);
+                          return isDateWithinInterval(selectedDate, startDate, endDate);
+                        } else {
+                          return isSameDay(selectedDate, startDate);
+                        }
+                      })
+                      .map((med, index) => (
+                        <View key={index} style={styles.medicationContainer}>
+                            <View style={styles.medicationContainerImage}>
+                              <Image style={{ width: 40, height: 40}} source={medicationImages[med.medicationType]} />
+                            </View>
+                            <View style={styles.medicationContainerContent}>
+                              <Text style={styles.medicationContainerContentName}>{med.medicationName}</Text>
+                              <Text style={styles.medicationName}>{med.dosage} {med.medicationType}(s)</Text>
+                            </View>
+                            <View style={styles.medicationContainerTime}>
+                              <Text style={styles.medicationContainerTimeTake}>{med.timeToTake.replace(':', 'h')}</Text>
+                            </View>
+                            <View style={styles.medicationContainerTime}>
+                              <TouchableOpacity onPress={() => navigation.navigate('TreatmenDetails', { medication: med })}>
+                                <Image style={{ width: 40, height: 40}} source={medicationImages[med.medicationType]} />
+                              </TouchableOpacity>
+                            </View>
+                        </View>
+                    ))}
+                  </ScrollView>
+                </View>
+              }
+            </View>
             <View class={styles.btnAddTreatmen}>
             <TouchableOpacity onPress={() => navigation.navigate("AddTreatmen")}>
                 <Image source={require('../../assets/icons/addTreatmen.png')}/>

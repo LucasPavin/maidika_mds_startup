@@ -34,6 +34,7 @@ const AddTreatmen = ({navigation}) => {
   const [dateToStart, setDateToStart] = useState(new Date());
   const [formattedDateToStart, setFormattedDateToStart] = useState("");
   const [timeToStart, setTimeToStart] = useState(new Date());
+  const [formattedTime, setFormattedTime] = useState('');
   const [dateToEnd, setDateToEnd] = useState(new Date());
   const [formattedDateToEnd, setFormattedDateToEnd] = useState("");
   const [isMultiDay, setIsMultiDay] = useState(false);
@@ -93,7 +94,6 @@ const AddTreatmen = ({navigation}) => {
     <TouchableOpacity
       style={styles.contactItem}
       onPress={() => {
-        // setSelectedContact(item);
         toggleModal();
         handleSelectContact(item)
       }}
@@ -111,6 +111,7 @@ const AddTreatmen = ({navigation}) => {
     switch (id) {
       case 1:
         setMedicationType('Géllule');
+        console.log(formattedTime);
         break;
       case 2:
         setMedicationType('Comprimé');
@@ -152,11 +153,10 @@ const AddTreatmen = ({navigation}) => {
   }, []);
 
   const handleSubmit = async () => {
-    // userId doit être défini
+
     if (!user) {
       console.error('User not found');
       return;
-    
     }
     const userId = user.id;
   
@@ -166,7 +166,7 @@ const AddTreatmen = ({navigation}) => {
       medicationName,
       dosage,
       medicationType,
-      timeToStart,
+      formattedTime,
       formattedDateToStart,
       formattedDateToEnd,
       selectedContact.formattedPhoneNumber,
@@ -304,7 +304,9 @@ const AddTreatmen = ({navigation}) => {
                 display="default"
                 onChange={(event, selectedTime) => {
                   if (selectedTime) {
-                    setTimeToStart(selectedTime); 
+                    setTimeToStart(selectedTime);
+                    const formattedTime = selectedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+                    setFormattedTime(formattedTime);
                   }
                 }}
               />

@@ -19,6 +19,7 @@ import ScanDocument from '../screens/ScanDocument/ScanDocument';
 import Treatmen from '../screens/Treatmen/Treatmen';
 import AddTreatmen from '../screens/Treatmen/AddTreatmen/AddTreatmen';
 import ValidAddTreatmen from '../screens/Treatmen/ValidAddTreatmen/ValidAddTreatmen';
+import TreatmenDetails from '../screens/Treatmen/TreatmenDetails/TreatmenDetails';
 
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -199,6 +200,13 @@ const AppNavigation = () => {
                     <Stack.Screen
                         name="ValidAddTreatmen"
                         component={ValidAddTreatmen}
+                        options={{
+                            headerShown: false
+                        }}
+                    />
+                    <Stack.Screen
+                        name="TreatmenDetails"
+                        component={TreatmenDetails}
                         options={{
                             headerShown: false
                         }}
