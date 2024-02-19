@@ -100,6 +100,29 @@ export const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
     },
+    bgModalDelete: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center', 
+        backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    },
+    bgModalDeleteContent: { 
+        backgroundColor: 'white', 
+        paddingHorizontal: 20, 
+        paddingVertical: 40,
+        borderRadius: 10,
+        width: '70%',
+    },
+    bgModalDeleteButtons : {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginTop: 30,
+    },
+    bgModalDeleteContentSubject : {
+        fontSize: 20,
+        fontWeight: '600',
+        textAlign: 'center'
+    }
 });
 
 

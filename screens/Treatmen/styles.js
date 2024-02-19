@@ -77,6 +77,7 @@ export const styles = StyleSheet.create({
     },
     medicationsContainer: {
         marginVertical: 20,
+        height: "60%"
     },
     medicationContainer : {
         flex: 1,
@@ -93,7 +94,7 @@ export const styles = StyleSheet.create({
         borderRadius: 20,
     },
     medicationContainerContent: {
-        width: 150,
+        width: 130,
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'flex-start',   
@@ -110,6 +111,21 @@ export const styles = StyleSheet.create({
     },
     medicationContainerTimeTake: {
         fontSize: 16,
+    },
+    medicationContainerDetails : {
+        width: 75,
+        flex: 1,
+    },
+    medicationContainerDetailsButton : {
+        height: '100%',
+        backgroundColor: Colors.bluePrimary,
+        paddingHorizontal: 5,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    medicationContainerDetailsButtonText: {
+        color: Colors.white,
     }
 });
 

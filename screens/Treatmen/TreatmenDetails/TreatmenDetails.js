@@ -1,11 +1,15 @@
-import { Image, Text, View, TouchableOpacity } from 'react-native'
-import React from 'react'
+import { Modal, Image, Text, View, TouchableOpacity, Button } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import { styles } from './styles';
 import LottieView from 'lottie-react-native';
 import ButtonTreatmenDetails from '../../../components/ButtonTreatmenDetails';
+import { removeMedication, recordMedicationTake, createMedicationTakesTable } from '../../../database/sqlite-database';
 
 const TreatmenDetails = ({ navigation, route }) => {
-    const { medication } = route.params; 
+    const { medication, selectedDate } = route.params; 
+
+    const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
+    const [modalTakenVisible, setModalTakenVisible] = useState(false);
 
     const medicationImages = {
         'Comprimé': require('../../../assets/treatmen/comprimes.png'),
@@ -13,6 +17,7 @@ const TreatmenDetails = ({ navigation, route }) => {
         'Liquide': require('../../../assets/treatmen/liquide.png'),
         'Crème': require('../../../assets/treatmen/creme.png'),
     };
+
 
     const formatDate = (dateString) => {
         let date = new Date(dateString);
@@ -23,7 +28,35 @@ const TreatmenDetails = ({ navigation, route }) => {
         if(day < 10) day = '0' + day;
         if(month < 10) month = '0' + month;
         return `${day}-${month}-${year}`;
-      }
+    }
+
+    useEffect(() => {
+        createMedicationTakesTable()
+            .then(() => console.log('Table créée avec succès'))
+            .catch(error => console.error('Erreur lors de la création de la table : ', error));
+    }, []);
+  
+    const handleDelete = () => {
+      removeMedication(medication.id)
+        .then(() => {
+            setModalDeleteVisible(false);
+            navigation.navigate('Traitement');
+        })
+        .catch((error) => {
+            Alert.alert('Une erreur est survenue, merci de réessayer ultérieurement.');
+        });
+    };
+
+    const handleTaken = () => {
+        recordMedicationTake(medication.id, true, selectedDate)
+        .then(() => {
+            setModalTakenVisible(false);
+            navigation.navigate('Traitement');
+        })
+        .catch((error) => {
+            console.error('Failed to delete medication:', error);
+        });
+    };
 
   return (
     <>
@@ -98,10 +131,44 @@ const TreatmenDetails = ({ navigation, route }) => {
             </View>
             <View style={styles.containerButtons}>
                 <View>
-                    <ButtonTreatmenDetails onPress={() => {}}>Prise effectuée</ButtonTreatmenDetails>
+                    <ButtonTreatmenDetails onPress={() => setModalTakenVisible(true)}>J'ai pris mon médicament</ButtonTreatmenDetails>
+
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={modalTakenVisible}
+                    >
+                    <View style={styles.bgModalDelete}>
+                        <View style={styles.bgModalDeleteContent}>
+                            <Text style={styles.bgModalDeleteContentSubject}>Êtes-vous sûr de vouloir confirmer ?</Text>
+                            {/* <Text>Medicament : {medication.medicationName} {medication.dosage} {medication.medicationType}(s)</Text> */}
+                            <View style={styles.bgModalDeleteButtons}>
+                                <ButtonTreatmenDetails onPress={() => setModalTakenVisible(false)}>Annuler</ButtonTreatmenDetails>
+                                <ButtonTreatmenDetails type='red' onPress={handleTaken}>Confirmer</ButtonTreatmenDetails>
+                            </View>
+                        </View>
+                        </View>
+                    </Modal>
                 </View>
                 <View>
-                    <ButtonTreatmenDetails  type='red' onPress={() => {}}>Supprimer ce rappel</ButtonTreatmenDetails>
+                    <ButtonTreatmenDetails type='red' onPress={() => setModalDeleteVisible(true)}>Supprimer ce rappel</ButtonTreatmenDetails>
+
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={modalDeleteVisible}
+                    >
+                    <View style={styles.bgModalDelete}>
+                        <View style={styles.bgModalDeleteContent}>
+                            <Text style={styles.bgModalDeleteContentSubject}>Êtes-vous sûr de vouloir supprimer ce rappel ?</Text>
+                            {/* <Text>Medicament : {medication.medicationName} {medication.dosage} {medication.medicationType}(s)</Text> */}
+                            <View style={styles.bgModalDeleteButtons}>
+                                <ButtonTreatmenDetails onPress={() => setModalDeleteVisible(false)}>Annuler</ButtonTreatmenDetails>
+                                <ButtonTreatmenDetails type='red' onPress={handleDelete}>Supprimer</ButtonTreatmenDetails>
+                            </View>
+                        </View>
+                        </View>
+                    </Modal>
                 </View>
             </View>
         </View>

@@ -123,19 +123,8 @@ export const createMedicationsTable = () => {
                     FOREIGN KEY (userId) REFERENCES users(id)
                 );`,
                 [],
-                () => {
-                    tx.executeSql(
-                        'ALTER TABLE medications RENAME COLUMN imageId TO whenTake;',
-                        [],
-                        (tx, results) => {
-                            console.log('Column renamed successfully');
-                            resolve(results);
-                        },
-                        (tx, error) => {
-                            console.log('Error renaming column:', error);
-                            reject(error);
-                        }
-                    );
+                (_, result) => {
+                    resolve(result);
                 },
                 (_, error) => {
                     reject(error);
@@ -144,6 +133,7 @@ export const createMedicationsTable = () => {
         });
     });
 };
+
 // Function to insert data into 'medications' table
 export const insertMedication = (userId, whenTake, medicationName, dosage, medicationType, timeToTake, startDate, endDate, phoneNumber, comment) => {
     return new Promise((resolve, reject) => {
@@ -180,6 +170,91 @@ export const fetchMedications = (userId) => {
                 },
                 (tx, error) => {
                     console.log('Fetch error:', error);
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+export const removeMedication = (medicationId) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                'DELETE FROM medications WHERE id = ?',
+                [medicationId],
+                (tx, results) => {
+                    if (results.rowsAffected > 0) {
+                        console.log('Medication deleted successfully');
+                        resolve(true);
+                    } else {
+                        console.log('Deletion failed');
+                        resolve(false);
+                    }
+                },
+                (tx, error) => {
+                    console.log('Delete error:', error);
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+export const createMedicationTakesTable = () => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                `CREATE TABLE IF NOT EXISTS MedicationTakes (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    medicationId INTEGER,
+                    dateTaken TEXT,
+                    isTaken BOOLEAN DEFAULT 0,
+                    FOREIGN KEY (medicationId) REFERENCES medications(id)
+                );`,
+                [],
+                (_, result) => {
+                    resolve(result);
+                },
+                (_, error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+export const recordMedicationTake = (id, isTaken, dateTaken) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                `INSERT INTO MedicationTakes (medicationId, dateTaken, isTaken) VALUES (?, ?, ?)`,
+                [id, dateTaken, isTaken],
+                (_, result) => {
+                    resolve(result);
+                },
+                (_, error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+export const checkIfMedicationTaken = (medicationId, dateTaken) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                `SELECT * FROM MedicationTakes WHERE medicationId = ? AND dateTaken = ?`,
+                [medicationId, dateTaken],
+                (_, result) => {
+                    if (result.rows.length > 0) {
+                        resolve(true); // Le médicament a été pris
+                    } else {
+                        resolve(false); // Le médicament n'a pas été pris
+                    }
+                },
+                (_, error) => {
                     reject(error);
                 }
             );

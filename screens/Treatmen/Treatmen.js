@@ -17,6 +17,7 @@ const Treatment = ({navigation}) => {
   const [user, setUser] = useState(null);
   const [medication, setMedications] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(0);
   const scrollViewRef = useRef();
 
   const daysToLoad = 2;
@@ -28,6 +29,10 @@ const Treatment = ({navigation}) => {
     return startDate <= date && date <= endDate;
   };
 
+  const refreshData = () => {
+    setRefreshKey(prevKey => prevKey + 1);
+  };  
+  
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -51,7 +56,7 @@ const Treatment = ({navigation}) => {
     };
 
     fetchUser();
-  }, []);
+  }, [refreshKey]);
 
 
   // Fonction pour générer des jours autour de la date donnée
@@ -85,23 +90,17 @@ const Treatment = ({navigation}) => {
     }
   };
 
-  // S'assurer que le ScrollView se centre sur la date courante
+  const [days, setDays] = useState(() => {
+    const startDay = new Date();
+    return eachDayOfInterval({ start: startDay, end: addDays(startDay, 365) });
+  });
+  
   useEffect(() => {
     const index = days.findIndex(day => isToday(day));
     if (scrollViewRef.current) {
       scrollViewRef.current.scrollTo({ x: DAY_WIDTH * index, animated: false });
     }
   }, [days]);
-
-  const [days, setDays] = useState(() => {
-    const startDay = startOfWeek(new Date(), { weekStartsOn: 1 });
-    return eachDayOfInterval({ start: startDay, end: addDays(startDay, 6) });
-  });
-
-  useEffect(() => {
-    const startDay = startOfWeek(new Date(), { weekStartsOn: 1 });
-    setDays(eachDayOfInterval({ start: startDay, end: addDays(startDay, 6) }));
-  }, []);
 
 
   const medicationImages = {
@@ -110,6 +109,7 @@ const Treatment = ({navigation}) => {
     'Liquide': require('../../assets/treatmen/liquide.png'),
     'Crème': require('../../assets/treatmen/creme.png'),
   };
+  
   return (
     <>
       <Header />
@@ -158,50 +158,55 @@ const Treatment = ({navigation}) => {
             <View>
               {
                 isLoading ? 
-                <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-                  <LottieView
-                      source={require('../../assets/animations/medecine.json')}
-                      autoPlay={true}
-                      loop={false}
-                      speed={1} 
-                      style={{width: 100, height: 100}}
-                  />
-                </View>
+                  <View style={{ alignItems: 'center', justifyContent: 'center', height:'60%' }}>
+                    <LottieView
+                        source={require('../../assets/animations/medecine.json')}
+                        autoPlay={true}
+                        loop={false}
+                        speed={1} 
+                        style={{width: 100, height: 100}}
+                    />
+                  </View>
                 :
-                <View style={styles.medicationsContainer}>
-                  <ScrollView>
-                    {medication && medication
-                      .filter(med => {
-                        const startDate = new Date(med.startDate);
-                        if (med.endDate) {
-                          const endDate = new Date(med.endDate);
-                          endDate.setHours(23, 59, 59, 999);
-                          return isDateWithinInterval(selectedDate, startDate, endDate);
-                        } else {
-                          return isSameDay(selectedDate, startDate);
-                        }
-                      })
-                      .map((med, index) => (
-                        <View key={index} style={styles.medicationContainer}>
-                            <View style={styles.medicationContainerImage}>
-                              <Image style={{ width: 40, height: 40}} source={medicationImages[med.medicationType]} />
-                            </View>
-                            <View style={styles.medicationContainerContent}>
-                              <Text style={styles.medicationContainerContentName}>{med.medicationName}</Text>
-                              <Text style={styles.medicationName}>{med.dosage} {med.medicationType}(s)</Text>
-                            </View>
-                            <View style={styles.medicationContainerTime}>
-                              <Text style={styles.medicationContainerTimeTake}>{med.timeToTake.replace(':', 'h')}</Text>
-                            </View>
-                            <View style={styles.medicationContainerTime}>
-                              <TouchableOpacity onPress={() => navigation.navigate('TreatmenDetails', { medication: med })}>
+                  <View style={styles.medicationsContainer}>
+                    <ScrollView>
+                      {medication && medication
+                        .filter(med => {
+                          const startDate = new Date(med.startDate);
+                          if (med.endDate) {
+                            const endDate = new Date(med.endDate);
+                            endDate.setHours(23, 59, 59, 999);
+                            return isDateWithinInterval(selectedDate, startDate, endDate);
+                          } else {
+                            return isSameDay(selectedDate, startDate);
+                          }
+                        })
+                        .map((med, index) => (
+                          <View key={index} style={styles.medicationContainer}>
+                              <View style={styles.medicationContainerImage}>
                                 <Image style={{ width: 40, height: 40}} source={medicationImages[med.medicationType]} />
-                              </TouchableOpacity>
-                            </View>
-                        </View>
-                    ))}
-                  </ScrollView>
-                </View>
+                              </View>
+                              <View style={styles.medicationContainerContent}>
+                                <Text style={[styles.medicationContainerContentName, med.isTaken === 1 && { textDecorationLine: 'line-through' }]}>{med.medicationName}</Text>
+                                <Text style={[styles.medicationName, med.isTaken === 1 && { textDecorationLine: 'line-through' }]}>{med.dosage} {med.medicationType}(s)</Text>
+                              </View>
+                              <View style={styles.medicationContainerTime}>
+                                {
+                                  med.isTaken ?
+                                    <Text>Pris !</Text>
+                                  : 
+                                  <Text style={styles.medicationContainerTimeTake}>{med.timeToTake.replace(':', 'h')}</Text>
+                                }
+                              </View>
+                              <View style={styles.medicationContainerDetails}>
+                                <TouchableOpacity style={styles.medicationContainerDetailsButton} onPress={() => navigation.navigate('TreatmenDetails', { medication: med, selectedDate: selectedDate.toISOString().slice(0,10)})}>
+                                  <Text style={styles.medicationContainerDetailsButtonText}>Consulter</Text>
+                                </TouchableOpacity>
+                              </View>
+                          </View>
+                      ))}
+                    </ScrollView>
+                  </View>
               }
             </View>
             <View class={styles.btnAddTreatmen}>
