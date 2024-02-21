@@ -7,7 +7,7 @@ export const createUserTable = () => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
             tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, fName TEXT, email TEXT, phone INTEGER, password TEXT, confirmPassword TEXT);',
+                'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, fName TEXT, email TEXT NOT NULL UNIQUE, phone INTEGER, password TEXT);',
                 [],
                 () => {
                     console.log('users table created or already exists');
@@ -23,12 +23,12 @@ export const createUserTable = () => {
 };
 
 //function to insert data in 'users' table for Register screen.
-export const insertUser = (name, fname, email, phone, password, confirmPassword) => {
+export const insertUser = (name, fname, email, phone, password) => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
             tx.executeSql(
-                'INSERT INTO users (name, fname, email, phone, password, confirmPassword) VALUES (?, ?, ?, ?, ?, ?);',
-                [name, fname, email, phone, password, confirmPassword],
+                'INSERT INTO users (name, fname, email, phone, password) VALUES (?, ?, ?, ?, ?);',
+                [name, fname, email, phone, password],
                 (_, results) => {
                     const insertedId = results.insertId;
                     tx.executeSql(
@@ -79,20 +79,20 @@ export const updateUser = (userId, name, fname, password) => {
 
 
 
-//FOR LOGIN.
-//function to match user credentials for Login Screen.
-export const checkUserCredentials = (email, password) => {
+// FOR LOGIN.
+// function to get user by email for Login Screen.
+export const getUserByEmail = (email) => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
             tx.executeSql(
-                'SELECT * FROM users WHERE email = ? AND password = ?;',
-                [email, password],
+                'SELECT * FROM users WHERE email = ?;',
+                [email],
                 (_, results) => {
                     if (results.rows.length > 0) {
                         const user = results.rows.item(0);
                         resolve(user);
                     } else {
-                        reject('Invalid email or password');
+                        reject('Invalid email');
                     }
                 },
                 (_, error) => {

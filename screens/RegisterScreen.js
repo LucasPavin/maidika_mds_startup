@@ -6,6 +6,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { createUserTable, insertUser } from '../database/sqlite-database';
 import Colors from '../constants/Colors';
 import TextInputComponent from '../components/TextInputComponent';
+import bcrypt from 'react-native-bcrypt';
 
 const RegisterScreen = ({ navigation }) => {
     const [name, onChangeName] = useState('');
@@ -102,6 +103,10 @@ const RegisterScreen = ({ navigation }) => {
             setCPassError("");
         }
     }
+    
+    function checkPasswords(pass, cpass) {
+        return pass === cpass;
+    }
 
     //function to handle input validations when button is pressed.
     const handleValidation = () => {
@@ -147,20 +152,17 @@ const RegisterScreen = ({ navigation }) => {
             setCPassError("");
         }
 
-        // if (!avatar) {
-        //     console.error('Profile Image URI is null');
-        //     isValid = false;
-        //     Alert.alert('Error', 'Veuillez sélectionner une image de profil.', [{ text: 'OK' }]);
-        // }
-
         if (isValid) {
             console.log('Profile Image URI:', avatar);
-            if (isValid) {
-                insertUser(name, fName, email, phone, pass, cpass, avatar)
+            if (isValid && checkPasswords(pass, cpass)) {
+                let salt = bcrypt.genSaltSync(10);
+                let hashedPassword = bcrypt.hashSync(pass, salt);
+                
+                insertUser(name, fName, email, phone, hashedPassword, avatar)
                     .then(({ id, data }) => {
                         console.log('Inserted ID:', id);
                         console.log('Inserted data:', data);
-
+        
                         Alert.alert('Success', 'Utilisateur enregistré avec succès !', [
                             {
                                 text: 'OK',
@@ -176,6 +178,10 @@ const RegisterScreen = ({ navigation }) => {
                             { text: 'OK' },
                         ]);
                     });
+            } else {
+                Alert.alert('Error', "Les mots de passe ne correspondent pas. Veuillez réessayer !", [
+                    { text: 'OK' },
+                ]);
             }
         }
         return isValid;
@@ -224,19 +230,7 @@ const RegisterScreen = ({ navigation }) => {
                         )}
                         <Text style={styles.cameraText}>Ajouter votre photo</Text>
                     </TouchableOpacity>
-
-                    <Text style={[styles.labelText, { marginTop: 50 }]}>Nom</Text>
-                    <TextInputComponent
-                        placeholder='Votre nom'
-                        autocapitalize='words'
-                        keyboardType='default'
-                        secureTextEntry={false}
-                        value={name}
-                        onChangeText={handleNameChange}
-                        style={styles.inputField}
-                    />
-                    {nameError !== "" && <Text style={styles.errorText}>{nameError}</Text>}
-                    <Text style={styles.labelText}>Prénom</Text>
+                    <Text style={[styles.labelText, , { marginTop: 50 }]}>Prénom</Text>
                     <TextInputComponent
                         placeholder='Votre prénom'
                         autocapitalize='words'
@@ -247,6 +241,17 @@ const RegisterScreen = ({ navigation }) => {
                         style={styles.inputField}
                     />
                     {fNameError !== "" && <Text style={styles.errorText}>{fNameError}</Text>}
+                    <Text style={styles.labelText}>Nom</Text>
+                    <TextInputComponent
+                        placeholder='Votre nom'
+                        autocapitalize='words'
+                        keyboardType='default'
+                        secureTextEntry={false}
+                        value={name}
+                        onChangeText={handleNameChange}
+                        style={styles.inputField}
+                    />
+                    {nameError !== "" && <Text style={styles.errorText}>{nameError}</Text>}
                     <Text style={styles.labelText}>Email</Text>
                     <TextInputComponent
                         placeholder='Votre email'
@@ -293,7 +298,7 @@ const RegisterScreen = ({ navigation }) => {
                     {cpassError !== "" && <Text style={styles.errorText}>{cpassError}</Text>}
                 </View>
                 <TouchableOpacity style={styles.btnContainer} onPress={() => {
-                    if (handleValidation()) {
+                    if (handleValidation() && checkPasswords(pass, cpass)) {
                         navigation.navigate('Login')
                     }
                     else {

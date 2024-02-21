@@ -7,6 +7,7 @@ import { styles } from './styles';
 import { fetchMedications } from '../../database/sqlite-database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LottieView from 'lottie-react-native';
+import * as Notifications from 'expo-notifications';
 
 const { width } = Dimensions.get('window');
 const DAY_WIDTH = width / 5; // Pour afficher 5 jours sur l'écran
@@ -31,7 +32,7 @@ const Treatment = ({navigation}) => {
 
   const refreshData = () => {
     setRefreshKey(prevKey => prevKey + 1);
-  };  
+  }; 
   
   useEffect(() => {
     const fetchUser = async () => {
@@ -39,6 +40,7 @@ const Treatment = ({navigation}) => {
         setIsLoading(true);
   
           const storedUser = await AsyncStorage.getItem('user');
+          console.log('Stored user:', storedUser);
           if (!storedUser) {
               console.log('No user found');
               return;
@@ -170,41 +172,90 @@ const Treatment = ({navigation}) => {
                 :
                   <View style={styles.medicationsContainer}>
                     <ScrollView>
-                      {medication && medication
-                        .filter(med => {
-                          const startDate = new Date(med.startDate);
-                          if (med.endDate) {
-                            const endDate = new Date(med.endDate);
-                            endDate.setHours(23, 59, 59, 999);
-                            return isDateWithinInterval(selectedDate, startDate, endDate);
-                          } else {
-                            return isSameDay(selectedDate, startDate);
-                          }
-                        })
-                        .map((med, index) => (
-                          <View key={index} style={styles.medicationContainer}>
-                              <View style={styles.medicationContainerImage}>
-                                <Image style={{ width: 40, height: 40}} source={medicationImages[med.medicationType]} />
-                              </View>
-                              <View style={styles.medicationContainerContent}>
-                                <Text style={[styles.medicationContainerContentName, med.isTaken === 1 && { textDecorationLine: 'line-through' }]}>{med.medicationName}</Text>
-                                <Text style={[styles.medicationName, med.isTaken === 1 && { textDecorationLine: 'line-through' }]}>{med.dosage} {med.medicationType}(s)</Text>
-                              </View>
-                              <View style={styles.medicationContainerTime}>
-                                {
-                                  med.isTaken ?
-                                    <Text>Pris !</Text>
-                                  : 
-                                  <Text style={styles.medicationContainerTimeTake}>{med.timeToTake.replace(':', 'h')}</Text>
-                                }
-                              </View>
-                              <View style={styles.medicationContainerDetails}>
-                                <TouchableOpacity style={styles.medicationContainerDetailsButton} onPress={() => navigation.navigate('TreatmenDetails', { medication: med, selectedDate: selectedDate.toISOString().slice(0,10)})}>
-                                  <Text style={styles.medicationContainerDetailsButtonText}>Consulter</Text>
-                                </TouchableOpacity>
-                              </View>
-                          </View>
-                      ))}
+                      {
+                        medication && medication.length > 0 && (
+                          medication
+                            .filter(med => {
+                              const startDate = new Date(med.startDate);        
+                              selectedDate.setHours(0, 0, 0, 0);
+                              if (med.endDate) {
+                                const endDate = new Date(med.endDate);
+                                endDate.setHours(23, 59, 59, 999);
+                                return isDateWithinInterval(selectedDate, startDate, endDate);
+                              } else {
+                                return isSameDay(selectedDate, startDate);
+                              }
+                            })
+                            .length > 0 ? (
+                              medication
+                                .filter(med => {
+                                  const startDate = new Date(med.startDate);
+                                  if (med.endDate) {
+                                    const endDate = new Date(med.endDate);
+                                    endDate.setHours(23, 59, 59, 999);
+                                    return isDateWithinInterval(selectedDate, startDate, endDate);
+                                  } else {
+                                    return isSameDay(selectedDate, startDate);
+                                  }
+                                })
+                                .map((med, index) => {
+                                  // Supposons que med.timeToTake contient l'heure de prise du médicament sous la forme 'HH:mm'
+                                  const [hours, minutes] = med.timeToTake.split(':').map(Number);
+                                  
+                                  // Créez une nouvelle date pour l'heure de prise du médicament
+                                  const medDate = new Date();
+                                  medDate.setHours(hours);
+                                  medDate.setMinutes(minutes);
+                                  medDate.setSeconds(0);
+                                  
+                                  // Obtenez le nombre de millisecondes jusqu'à l'heure de prise du médicament
+                                  const delay = medDate.getTime() - Date.now();
+                                  
+                                  // Si le délai est positif (c'est-à-dire que l'heure de prise du médicament est dans le futur), planifiez une notification
+                                  if (delay > 0) {
+                                    Notifications.scheduleNotificationAsync({
+                                      content: {
+                                        title: 'Il est temps de prendre votre médicament',
+                                        body: med.medicationName,
+                                      },
+                                      trigger: {
+                                        seconds: delay / 1000,
+                                      },
+                                    });
+                                  }
+                                
+                                  // Retournez le composant JSX
+                                  return (
+                                    <View key={index} style={styles.medicationContainer}>
+                                      <View style={styles.medicationContainerImage}>
+                                        <Image style={{ width: 40, height: 40}} source={medicationImages[med.medicationType]} />
+                                      </View>
+                                      <View style={styles.medicationContainerContent}>
+                                        <Text style={[styles.medicationContainerContentName, med.isTaken === 1 && { textDecorationLine: 'line-through' }]}>{med.medicationName}</Text>
+                                        <Text style={[styles.medicationName, med.isTaken === 1 && { textDecorationLine: 'line-through' }]}>{med.dosage} {med.medicationType}(s)</Text>
+                                      </View>
+                                      <View style={styles.medicationContainerTime}>
+                                        {
+                                          med.isTaken ?
+                                            <Text>Pris !</Text>
+                                          : 
+                                          <Text style={styles.medicationContainerTimeTake}>{med.timeToTake.replace(':', 'h')}</Text>
+                                        }
+                                      </View>
+                                      <View style={styles.medicationContainerDetails}>
+                                        <TouchableOpacity style={styles.medicationContainerDetailsButton} onPress={() => navigation.navigate('TreatmenDetails', { medication: med, selectedDate: selectedDate.toISOString().slice(0,10)})}>
+                                          <Text style={styles.medicationContainerDetailsButtonText}>Voir</Text>
+                                        </TouchableOpacity>
+                                      </View>
+                                    </View>
+                                  );
+                                })
+
+                            ) : (
+                              <Text>Aucun traitement à prendre aujourd'hui</Text>
+                            )
+                        )
+                      }
                     </ScrollView>
                   </View>
               }

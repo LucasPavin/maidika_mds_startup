@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -133,91 +133,92 @@ function TabNavigator() {
 }
 
 const AppNavigation = () => {
+
     return (
         <NavigationContainer>
             <View style={styles.container}>
                 <Stack.Navigator>
-                    <Stack.Screen
-                        name="Onboarding"
-                        component={OnBoarding}
-                        options={{
-                            headerShown: false
-                        }} />
-                    <Stack.Screen
-                        name="Register"
-                        component={RegisterScreen}
-                        options={{
-                            headerShown: false
-                        }} />
-                    <Stack.Screen
-                        name="Login"
-                        component={LoginScreen}
-                        options={{
-                            headerShown: false
-                        }} />
-                    <Stack.Screen
-                        name="Home"
-                        component={TabNavigator}
-                        options={{
-                            headerShown: false
-                        }}
-                    />
-                    <Stack.Screen
-                        name="ListDrugStore"
-                        component={TabNavigator}
-                        options={{
-                            headerShown: false
-                        }}
-                    />
-                    <Stack.Screen
-                        name="DocumentView"
-                        component={DocumentView}
-                        options={{
-                            headerShown: false
-                        }}
-                    />
-                    <Stack.Screen
-                        name="ScanDocument"
-                        component={ScanDocument}
-                        options={{
-                            headerShown: false
-                        }}
-                    />
-                    <Stack.Screen
-                        name="MapsLocation"
-                        component={MapsLocation}
-                        options={{
-                            headerShown: false
-                        }}
-                    />
-                    <Stack.Screen
-                        name="AddTreatmen"
-                        component={AddTreatmen}
-                        options={{
-                            headerShown: false
-                        }}
-                    />
-                    <Stack.Screen
-                        name="ValidAddTreatmen"
-                        component={ValidAddTreatmen}
-                        options={{
-                            headerShown: false
-                        }}
-                    />
-                    <Stack.Screen
-                        name="TreatmenDetails"
-                        component={TreatmenDetails}
-                        options={{
-                            headerShown: false
-                        }}
-                    />
-                    <Stack.Screen
-                        name="ModifyInformation"
-                        component={ModifyInformation}
-                    // options={{
-                    //     headerShown: false
-                    // }}
-                    />
+                        <Stack.Screen
+                            name="Onboarding"
+                            component={OnBoarding}
+                            options={{
+                                headerShown: false
+                            }} />
+                        <Stack.Screen
+                            name="Register"
+                            component={RegisterScreen}
+                            options={{
+                                headerShown: false
+                            }} />
+                        <Stack.Screen
+                            name="Login"
+                            component={LoginScreen}
+                            options={{
+                                headerShown: false
+                            }} />
+                        <Stack.Screen
+                            name="Home"
+                            component={TabNavigator}
+                            options={{
+                                headerShown: false
+                            }}
+                        />
+                        <Stack.Screen
+                            name="ListDrugStore"
+                            component={TabNavigator}
+                            options={{
+                                headerShown: false
+                            }}
+                        />
+                        <Stack.Screen
+                            name="DocumentView"
+                            component={DocumentView}
+                            options={{
+                                headerShown: false
+                            }}
+                        />
+                        <Stack.Screen
+                            name="ScanDocument"
+                            component={ScanDocument}
+                            options={{
+                                headerShown: false
+                            }}
+                        />
+                        <Stack.Screen
+                            name="MapsLocation"
+                            component={MapsLocation}
+                            options={{
+                                headerShown: false
+                            }}
+                        />
+                        <Stack.Screen
+                            name="AddTreatmen"
+                            component={AddTreatmen}
+                            options={{
+                                headerShown: false
+                            }}
+                        />
+                        <Stack.Screen
+                            name="ValidAddTreatmen"
+                            component={ValidAddTreatmen}
+                            options={{
+                                headerShown: false
+                            }}
+                        />
+                        <Stack.Screen
+                            name="TreatmenDetails"
+                            component={TreatmenDetails}
+                            options={{
+                                headerShown: false
+                            }}
+                        />
+                        <Stack.Screen
+                            name="ModifyInformation"
+                            component={ModifyInformation}
+                        // options={{
+                        //     headerShown: false
+                        // }}
+                        />
                 </Stack.Navigator>
             </View>
         </NavigationContainer>
