@@ -2,14 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, TouchableOpacity, Image, Alert, Text, ActivityIndicator, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
-import Colors from '../../constants/Colors';
+import { styles } from './styles';
+import Header from '../../components/Header';
+import ButtonTreatmenDetails from '../../components/ButtonTreatmenDetails';
 
 const ScanDocument = ({navigation, route}) => {
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null);
-  const [croppedImage, setCroppedImage] = useState(null);
-  const [showCrop, setShowCrop] = useState(false);
-  const cropRef = useRef(null);
 
   const { user } = route.params;
 
@@ -26,8 +25,10 @@ const ScanDocument = ({navigation, route}) => {
       return;
     }
 
-    const photo = await cameraRef.takePictureAsync();
-    setCapturedImage(photo);
+    setTimeout(async () => {
+      const photo = await cameraRef.takePictureAsync();
+      setCapturedImage(photo);
+    }, 500);
   };
 
   const handleRetake = () => {
@@ -47,11 +48,18 @@ const ScanDocument = ({navigation, route}) => {
       <Camera
         style={{ flex: 1 }}
         type={Camera.Constants.Type.back}
+        autoFocus={Camera.Constants.AutoFocus.on}
         ref={ref => {
           cameraRef = ref;
         }}
       >
-        <View style={{ flex: 1, backgroundColor: 'transparent', flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end' }}>
+        <View style={styles.backButton}>
+          <TouchableOpacity style={styles.backButtonTouchable} onPress={() => navigation.goBack()}>
+            <Ionicons name="arrow-back" size={16} color="black" />
+            <Text>Retour</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.containerCamera}>
           <TouchableOpacity style={styles.captureButton} onPress={takePicture}>
             <Ionicons name="camera" size={32} color="white" />
           </TouchableOpacity>
@@ -72,14 +80,19 @@ const ScanDocument = ({navigation, route}) => {
         </View>
       ) : capturedImage ? (
         <View style={{ flex: 1 }}>
-          <Image source={{ uri: capturedImage.uri }} style={{ flex: 1 }} resizeMode="contain" />
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.retakeButton} onPress={handleRetake}>
-              <Text style={styles.buttonText}>Retake</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.cropButton} onPress={handleSave}>
-              <Text style={styles.buttonText}>Sauvegarder</Text>
-            </TouchableOpacity>
+          <View style={styles.containerPreview}>
+            <Header/>
+            <View style={styles.previewPictureBack}>
+              <TouchableOpacity style={styles.previewPictureBackTouchable} onPress={() => navigation.goBack()}>
+                <Ionicons name="arrow-back" size={16} color="black" />
+                <Text>Retour</Text>
+              </TouchableOpacity>
+            </View>
+            <Image source={{ uri: capturedImage.uri }} style={styles.previewPicture} resizeMode="cover" />
+            <View style={styles.buttonContainer}>
+              <ButtonTreatmenDetails type="teal" style={styles.buttonContainerRetake} onPress={handleRetake}>Reprendre une photo</ButtonTreatmenDetails>
+              <ButtonTreatmenDetails type="blue" style={styles.buttonContainerSave} onPress={handleSave}>Sauvegarder la photo&</ButtonTreatmenDetails>
+            </View>
           </View>
         </View>
       ) : (
@@ -88,51 +101,5 @@ const ScanDocument = ({navigation, route}) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  captureButton: {
-    backgroundColor: 'white',
-    borderRadius: 50,
-    padding: 15,
-    marginBottom: 20,
-  },
-  retakeButton: {
-    backgroundColor: Colors.teal,
-    borderRadius: 5,
-    padding: 10,
-    margin: 10,
-  },
-  cropButton: {
-    backgroundColor: Colors.blue,
-    borderRadius: 5,
-    padding: 10,
-    margin: 10,
-  },
-  buttonText: {
-    color: 'black',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  permissionDeniedContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  permissionDeniedText: {
-    fontSize: 18,
-    textAlign: 'center',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 20,
-  },
-});
 
 export default ScanDocument;
