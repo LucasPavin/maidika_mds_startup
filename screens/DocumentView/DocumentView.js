@@ -7,12 +7,12 @@ import { fetchPrescriptionsByUserId, deletePrescriptionById } from '../../databa
 import ButtonTreatmenDetails from '../../components/ButtonTreatmenDetails';
 import * as MailComposer from 'expo-mail-composer';
 import LottieView from 'lottie-react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 
 const DocumentView = ({ navigation, route, userId }) => {
   const [prescriptions, setPrescriptions] = useState([]);
   const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
-  const [isImageModalVisible, setImageModalVisible] = useState(false);
 
   const { user } = route.params;
   console.log(user);
@@ -89,14 +89,23 @@ const DocumentView = ({ navigation, route, userId }) => {
   
             <Modal
               animationType="slide"
-              transparent={false}
+              transparent={true}
               visible={isImageModalVisible}
             >
-              <View style={{ flex: 1, backgroundColor: 'black', justifyContent: 'center', alignItems: 'center' }}>
-                <Image source={{ uri: item.photo }} style={{ width: '80%', height: '80%' }} resizeMode="contain" />
-                <TouchableOpacity onPress={() => setImageModalVisible(false)} style={{ position: 'absolute', top: 50, right: 20 }}>
-                  <Text style={{ color: 'white', fontSize: 30 }}>X</Text>
-                </TouchableOpacity>
+              <View style={styles.bgModalPicture}>
+                {/* <View style={styles.bgModalDeleteContent}>
+                  <Text style={styles.bgModalDeleteContentSubject}>Êtes-vous sûr de vouloir supprimer cette ordonnance ?</Text>
+                  <View style={styles.bgModalDeleteButtons}>
+                    <ButtonTreatmenDetails onPress={() => setModalDeleteVisible(false)}>Annuler</ButtonTreatmenDetails>
+                    <ButtonTreatmenDetails type='red' onPress={() => deletePrescription(item)}>Supprimer</ButtonTreatmenDetails>
+                  </View>
+                </View> */}
+                <View style={styles.bgModalPictureContent}>
+                  <Image source={{ uri: item.photo }} style={{ width: '100%', height: '80%' }} resizeMode="cover" />
+                  <TouchableOpacity onPress={() => setImageModalVisible(false)} style={styles.containerCloseView}>
+                    <Text style={styles.containerCloseViewText}>Fermer</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </Modal>
             

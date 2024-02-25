@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { View, Image, Text, TextInput, Button, Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import { insertPrescription, createPrescriptionTable } from '../../../database/sqlite-database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as FileSystem from 'expo-file-system';
+import Header from '../../../components/Header';
+import { Ionicons } from '@expo/vector-icons';
+import {styles} from './styles';
+import ButtonTreatmenDetails from '../../../components/ButtonTreatmenDetails';
 
 
 const InsertPrescription = ({ navigation, route }) => {
@@ -11,19 +14,6 @@ const InsertPrescription = ({ navigation, route }) => {
     const [title, setTitle] = useState('');
     const [comment, setComment] = useState('');
     const [userId, setUserId] = useState(null);
-
-    const convertImageToBase64 = async (uri) => {
-        try {
-          // Lire l'image en tant que base64
-          const base64Image = await FileSystem.readAsStringAsync(uri, {
-            encoding: FileSystem.EncodingType.Base64,
-          });
-          return base64Image;
-        } catch (error) {
-          console.error('Error converting image to base64:', error);
-          throw error;
-        }
-    };
 
     useEffect(() => {
         createPrescriptionTable()
@@ -47,6 +37,10 @@ const InsertPrescription = ({ navigation, route }) => {
         };
         fetchUser();
     }, []);
+
+    const isoDate = new Date().toISOString().split('T')[0];
+    const [year, month, day] = isoDate.split('-');
+    const date = `${day}/${month}/${year}`;
 
     const handleSave = async () => {
         try {
@@ -74,52 +68,42 @@ const InsertPrescription = ({ navigation, route }) => {
     
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Insert Prescription</Text>
-            <Image source={{ uri: capturedImage.uri }} style={styles.image} />
-            <TextInput
-                style={styles.input}
-                placeholder="Title"
-                value={title}
-                onChangeText={setTitle}
-            />
-            <TextInput
-                style={[styles.input, { height: 100 }]}
-                placeholder="Comment"
-                multiline
-                value={comment}
-                onChangeText={setComment}
-            />
-            <Button title="Save Prescription" onPress={handleSave} />
-        </View>
+        <>
+            <Header/>
+            <View style={styles.container}>
+                <View style={styles.previewPictureBack}>
+                <TouchableOpacity style={styles.previewPictureBackTouchable} onPress={() => navigation.goBack()}>
+                    <Ionicons name="arrow-back" size={16} color="black" />
+                    <Text>Retour</Text>
+                </TouchableOpacity>
+                </View>
+                <Text style={styles.title}>Ordonnance du {date} </Text>
+                <View style={styles.containerImage}>
+                    <Image source={{ uri: capturedImage.uri }} style={styles.image} />
+                </View>
+                <View>
+                    <Text style={styles.textForm}>Ajouter un titre</Text>
+                    <TextInput
+                        style={styles.input}
+                        placeholder="Title"
+                        value={title}
+                        onChangeText={setTitle}
+                    />
+                </View>
+                <View>
+                    <Text style={styles.textForm}>Ajouter un commentaire</Text>
+                    <TextInput
+                        style={[styles.input, { height: 100 }]}
+                        placeholder="Comment"
+                        multiline
+                        value={comment}
+                        onChangeText={setComment}
+                    />
+                </View>
+                <ButtonTreatmenDetails type="blue" style={styles.buttonBottom} onPress={handleSave}>Sauvegarder l'ordonnance</ButtonTreatmenDetails>
+            </View>
+        </>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-    },
-    image: {
-        width: 200,
-        height: 200,
-        marginBottom: 20,
-    },
-    input: {
-        width: '100%',
-        borderWidth: 1,
-        borderColor: 'gray',
-        borderRadius: 5,
-        padding: 10,
-        marginBottom: 20,
-    },
-});
 
 export default InsertPrescription;

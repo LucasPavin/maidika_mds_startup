@@ -91,7 +91,7 @@ const ScanDocument = ({navigation, route}) => {
             <Image source={{ uri: capturedImage.uri }} style={styles.previewPicture} resizeMode="cover" />
             <View style={styles.buttonContainer}>
               <ButtonTreatmenDetails type="teal" style={styles.buttonContainerRetake} onPress={handleRetake}>Reprendre une photo</ButtonTreatmenDetails>
-              <ButtonTreatmenDetails type="blue" style={styles.buttonContainerSave} onPress={handleSave}>Sauvegarder la photo&</ButtonTreatmenDetails>
+              <ButtonTreatmenDetails type="blue" style={styles.buttonContainerSave} onPress={handleSave}>Sauvegarder la photo</ButtonTreatmenDetails>
             </View>
           </View>
         </View>

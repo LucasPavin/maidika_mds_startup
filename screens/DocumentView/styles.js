@@ -111,6 +111,29 @@ export const styles = StyleSheet.create({
     containerContentItemBottomButtons: {
         width: '65%',
     },
+    bgModalPicture : {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center', 
+        backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    },
+    bgModalPictureContent: {
+        width: '70%',
+        justifyContent: 'center', 
+        alignItems: 'center' 
+    },
+    containerCloseView : {
+        position: 'absolute', 
+        top: 25, 
+        right: 0,
+        backgroundColor: Colors.lightGrey,
+        borderRadius: 10,
+    },
+    containerCloseViewText : {
+        padding: 10,
+        color: Colors.black,
+        fontSize: 16,
+    },
     bgModalDeleteContent: { 
         backgroundColor: 'white', 
         paddingHorizontal: 20, 
