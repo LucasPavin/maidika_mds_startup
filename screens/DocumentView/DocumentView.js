@@ -93,13 +93,6 @@ const DocumentView = ({ navigation, route, userId }) => {
               visible={isImageModalVisible}
             >
               <View style={styles.bgModalPicture}>
-                {/* <View style={styles.bgModalDeleteContent}>
-                  <Text style={styles.bgModalDeleteContentSubject}>Êtes-vous sûr de vouloir supprimer cette ordonnance ?</Text>
-                  <View style={styles.bgModalDeleteButtons}>
-                    <ButtonTreatmenDetails onPress={() => setModalDeleteVisible(false)}>Annuler</ButtonTreatmenDetails>
-                    <ButtonTreatmenDetails type='red' onPress={() => deletePrescription(item)}>Supprimer</ButtonTreatmenDetails>
-                  </View>
-                </View> */}
                 <View style={styles.bgModalPictureContent}>
                   <Image source={{ uri: item.photo }} style={{ width: '100%', height: '80%' }} resizeMode="cover" />
                   <TouchableOpacity onPress={() => setImageModalVisible(false)} style={styles.containerCloseView}>
