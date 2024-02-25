@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useState } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -20,6 +20,7 @@ import Treatmen from '../screens/Treatmen/Treatmen';
 import AddTreatmen from '../screens/Treatmen/AddTreatmen/AddTreatmen';
 import ValidAddTreatmen from '../screens/Treatmen/ValidAddTreatmen/ValidAddTreatmen';
 import TreatmenDetails from '../screens/Treatmen/TreatmenDetails/TreatmenDetails';
+import InsertPrescription from '../screens/ScanDocument/InsertPrescription/InsertPrescription';
 
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -133,6 +134,8 @@ function TabNavigator() {
 }
 
 const AppNavigation = () => {
+    const [user, setUser] = useState(null);
+    console.log(user);
 
     return (
         <NavigationContainer>
@@ -180,6 +183,13 @@ const AppNavigation = () => {
                         <Stack.Screen
                             name="ScanDocument"
                             component={ScanDocument}
+                            options={{
+                                headerShown: false
+                            }}
+                        />
+                        <Stack.Screen
+                            name="InsertPrescription"
+                            component={InsertPrescription}
                             options={{
                                 headerShown: false
                             }}

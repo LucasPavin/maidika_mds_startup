@@ -16,6 +16,9 @@ const styles = StyleSheet.create({
     greenbg : {
         backgroundColor: Colors.teal,
     },
+    bluebg : {
+        backgroundColor: Colors.blue,
+    },
     text : {
         color : Colors.white,
         fontSize: 16,

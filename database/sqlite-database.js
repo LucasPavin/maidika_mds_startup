@@ -261,3 +261,97 @@ export const checkIfMedicationTaken = (medicationId, dateTaken) => {
         });
     });
 };
+
+
+// Ordonnance
+// Function to create 'images' table
+export const createPrescriptionTable = () => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                'CREATE TABLE IF NOT EXISTS prescription (id INTEGER PRIMARY KEY AUTOINCREMENT, photo BLOB, title TEXT, date DATE, comment TEXT, userId INTEGER, FOREIGN KEY(userId) REFERENCES users(id));',
+                [],
+                () => {
+                    console.log('images table created or already exists');
+                    resolve();
+                },
+                (error) => {
+                    console.error('Error creating images table: ', error);
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+// Function to insert data into 'images' table
+export const insertPrescription = (photo, title, date, comment, userId) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                'INSERT INTO prescription (photo, title, date, comment, userId) VALUES (?, ?, ?, ?, ?);',
+                [photo, title, date, comment, userId],
+                (_, results) => {
+                    const insertedId = results.insertId;
+                    tx.executeSql(
+                        'SELECT * FROM prescription WHERE id = ?;',
+                        [insertedId],
+                        (_, selectResults) => {
+                            if (selectResults.rows.length > 0) {
+                                const insertedData = selectResults.rows.item(0);
+                                resolve({ id: insertedId, data: insertedData });
+                            } else {
+                                reject('Data not found !');
+                            }
+                        },
+                        (_, error) => {
+                            reject(error);
+                        }
+                    );
+                },
+                (_, error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+export const fetchPrescriptionsByUserId = (userId) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                'SELECT * FROM prescription WHERE userId = ?;',
+                [userId],
+                (_, results) => {
+                    let prescriptions = [];
+                    for (let i = 0; i < results.rows.length; i++) {
+                        prescriptions.push(results.rows.item(i));
+                    }
+                    resolve(prescriptions);
+                },
+                (_, error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};
+
+// Delete prescription
+export const deletePrescriptionById = (id) => {
+    return new Promise((resolve, reject) => {
+        db.transaction((tx) => {
+            tx.executeSql(
+                'DELETE FROM prescription WHERE id = ?;',
+                [id],
+                (_, results) => {
+                    resolve(results);
+                },
+                (_, error) => {
+                    reject(error);
+                }
+            );
+        });
+    });
+};

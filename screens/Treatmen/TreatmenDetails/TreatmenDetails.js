@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { styles } from './styles';
 import LottieView from 'lottie-react-native';
 import ButtonTreatmenDetails from '../../../components/ButtonTreatmenDetails';
-import { removeMedication, recordMedicationTake, createMedicationTakesTable } from '../../../database/sqlite-database';
+import { removeMedication, recordMedicationTake, createMedicationTakesTable, checkIfMedicationTaken } from '../../../database/sqlite-database';
 
 const TreatmenDetails = ({ navigation, route }) => {
     const { medication, selectedDate } = route.params; 
