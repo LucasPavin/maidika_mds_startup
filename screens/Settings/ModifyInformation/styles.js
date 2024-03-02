@@ -65,7 +65,6 @@ export  const styles = StyleSheet.create({
         marginBottom: 10,
     },
     cameraText: {
-        fontSize: 12,
         color: Colors.lightGrey,
         textAlign: 'center',
     },

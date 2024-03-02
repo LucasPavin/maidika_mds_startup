@@ -226,7 +226,7 @@ const RegisterScreen = ({ navigation }) => {
                             <Image source={{ uri: avatar }} style={styles.avatarImage} />
                         ) : (
                             <View style={styles.cameraIconContainer}>
-                                <FontAwesome name="camera" size={24} color={Colors.lightGrey} />
+                                <FontAwesome name="camera" color={Colors.lightGrey} />
                             </View>
                         )}
                         <Text style={styles.cameraText}>Ajouter votre photo</Text>
@@ -377,7 +377,6 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     cameraText: {
-        fontSize: 12,
         color: Colors.lightGrey,
         textAlign: 'center',
     },

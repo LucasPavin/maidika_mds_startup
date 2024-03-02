@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
+import * as SecureStore from 'expo-secure-store';
 import Colors from '../constants/Colors';
 import OnBoarding from '../screens/OnBoarding/OnBoarding';
 import RegisterScreen from '../screens/RegisterScreen';
@@ -21,7 +21,6 @@ import AddTreatmen from '../screens/Treatmen/AddTreatmen/AddTreatmen';
 import ValidAddTreatmen from '../screens/Treatmen/ValidAddTreatmen/ValidAddTreatmen';
 import TreatmenDetails from '../screens/Treatmen/TreatmenDetails/TreatmenDetails';
 import InsertPrescription from '../screens/ScanDocument/InsertPrescription/InsertPrescription';
-import GlobalData from '../utils/GlobalData';
 
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -133,12 +132,29 @@ function TabNavigator() {
 
 const AppNavigation = () => {
     
-    const user = GlobalData?.user;
+    const [initialRoute, setInitialRoute] = useState('Login'); // Définir la route initiale à 'Login'
+
+    const getToken = async () => {
+        const token = await SecureStore.getItemAsync('userToken');
+        return token;
+    };
+    useEffect(() => {
+        const initializeAuth = async () => {
+            const token = await getToken();
+            if (token) {
+                console.log(token, 'initialRoute');
+            }
+        };
+
+        initializeAuth();
+    }, []);
+
+
     
     return (
         <NavigationContainer>
             <View style={styles.container}>
-                <Stack.Navigator>
+                <Stack.Navigator initialRouteName={initialRoute}>
                         <Stack.Screen
                             name="Onboarding"
                             component={OnBoarding}

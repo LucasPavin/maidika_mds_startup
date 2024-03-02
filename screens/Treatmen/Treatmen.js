@@ -64,7 +64,7 @@ const Treatment = ({navigation}) => {
   // Fonction pour générer des jours autour de la date donnée
   const generateDays = (date, daysToGenerate = 180) => {
     let newDays = [];
-    for (let i = -Math.floor(daysToGenerate / 1); i <= Math.floor(daysToGenerate / 1); i++) {
+    for (let i = - Math.floor(daysToGenerate / 1); i <= Math.floor(daysToGenerate / 1); i++) {
       newDays.push(addDays(date, i));
     }
     return newDays;

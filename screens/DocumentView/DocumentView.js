@@ -7,19 +7,31 @@ import { fetchPrescriptionsByUserId, deletePrescriptionById } from '../../databa
 import ButtonTreatmenDetails from '../../components/ButtonTreatmenDetails';
 import * as MailComposer from 'expo-mail-composer';
 import LottieView from 'lottie-react-native';
-import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-const DocumentView = ({ navigation, route, userId }) => {
+const DocumentView = ({ navigation, userId }) => {
   const [prescriptions, setPrescriptions] = useState([]);
   const [modalDeleteVisible, setModalDeleteVisible] = useState(false);
+  const [user, setUser] = useState(null);
 
-  const { user } = route.params;
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const user = await AsyncStorage.getItem('user');
+      setUser(JSON.parse(user));
+    };
+  
+    fetchUser();
+  }, []);
+
   console.log(user);
 
   const fetchPrescriptions = async (item) => {
-    const fetchedPrescriptions = await fetchPrescriptionsByUserId(user.id);
-    setPrescriptions(fetchedPrescriptions);
+    if (user) {
+      const fetchedPrescriptions = await fetchPrescriptionsByUserId(user.id);
+      setPrescriptions(fetchedPrescriptions);
+    }
   };
 
   const deletePrescription = async (item) => {
@@ -146,7 +158,7 @@ const DocumentView = ({ navigation, route, userId }) => {
         </View>
         <View>
           <View  style={{ height: 600}}>
-            <Text style={styles.containerTitle}>Vos ordonnances {user.fName} :</Text>
+            <Text style={styles.containerTitle}>Vos ordonnances {user ? user.fName : ''} :</Text>
             <View>
               {
                   prescriptions.length === 0 ? 

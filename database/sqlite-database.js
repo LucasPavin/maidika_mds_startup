@@ -6,15 +6,14 @@ const db = SQLite.openDatabase('Maidika.db');
 
 const generateToken = async (userId) => {
     const token = await jwt.sign(
-        { id: userId }, // this is the token payload
-        'your-secret-key', // secret
+        { id: userId },
+        'votre-clé-secrète',
         {
             alg: 'HS256',
-            exp: Math.floor(Date.now() / 1000) + (60 * 60), // expires in 1 hour
+            exp: Math.floor(Date.now() / 1000) + (60 * 60),
         }
     );
 
-    // Store the token securely
     await SecureStore.setItemAsync('userToken', token);
 };
 
@@ -45,7 +44,7 @@ export const insertUser = (name, fname, email, phone, password, profileImage) =>
             tx.executeSql(
                 'INSERT INTO users (name, fname, email, phone, password, profileImage) VALUES (?, ?, ?, ?, ?, ?);',
                 [name, fname, email, phone, password, profileImage],
-                async (_, results) => {
+                               async (_, results) => {
                     const insertedId = results.insertId;
                     tx.executeSql(
                         'SELECT * FROM users WHERE id = ?;',
@@ -53,7 +52,6 @@ export const insertUser = (name, fname, email, phone, password, profileImage) =>
                         async (_, selectResults) => {
                             if (selectResults.rows.length > 0) {
                                 const insertedData = selectResults.rows.item(0);
-                                // Générer un token pour le nouvel utilisateur
                                 await generateToken(insertedId);
                                 resolve({ id: insertedId, data: insertedData });
                             } else {
