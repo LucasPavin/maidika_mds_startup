@@ -10,8 +10,8 @@ import RegisterScreen from '../screens/RegisterScreen';
 import LoginScreen from '../screens/LoginScreen';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import Traitement from '../screens/Traitement';
-import MonProfil from '../screens/MonProfil';
-import ModifyInformation from '../screens/ModifyInformation';
+import Settings from '../screens/Settings/Settings';
+import ModifyInformation from '../screens/Settings/ModifyInformation/ModifyInformation';
 import ListDrugStore from '../screens/DrugStore/ListDrugStore';
 import MapsLocation from '../screens/DrugStore/MapsLocation/MapsLocation';
 import DocumentView from '../screens/DocumentView/DocumentView';
@@ -21,6 +21,7 @@ import AddTreatmen from '../screens/Treatmen/AddTreatmen/AddTreatmen';
 import ValidAddTreatmen from '../screens/Treatmen/ValidAddTreatmen/ValidAddTreatmen';
 import TreatmenDetails from '../screens/Treatmen/TreatmenDetails/TreatmenDetails';
 import InsertPrescription from '../screens/ScanDocument/InsertPrescription/InsertPrescription';
+import GlobalData from '../utils/GlobalData';
 
 const Stack = createNativeStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -40,32 +41,27 @@ const tabs = [
         },
     },
     {
-        name: 'Traitement',
-        component: Treatmen,
-        source: require('../assets/icons/pillule.png'),
+        name: 'Ordonnances',
+        component: DocumentView,
+        source: require('../assets/images/b3.png'),
         styles_logo: {
             width: 25,
             height: 25,
         },
         styles_name: {
-            fontSize: 12
+            fontSize: 14
         },
     },
     {
-        name: ' ',
-        component: DocumentView,
-        source: require('../assets/images/scan.png'),
-        styles_logo: {
-            alignItems: 'center',
-            justifyContent:"center", 
-            top: 15
-        },
+        name: 'Traitement',
+        component: Treatmen,
+        source: require('../assets/icons/pillule.png'),
         styles_name: {
-            fontSize: 12
+            fontSize: 14
         },
     },
     {
-        name: 'ListDrugStore',
+        name: 'Pharmacies',
         component: ListDrugStore,
         source: require('../assets/images/b4.png'),
         styles_logo: {
@@ -73,12 +69,12 @@ const tabs = [
             height: 25,
         },
         styles_name: {
-            fontSize: 12
+            fontSize: 14
         },
     },
     {
         name: 'Mon profil',
-        component: MonProfil,
+        component: Settings,
         source: require('../assets/images/b5.png'),
         styles_logo: {
             width: 25,
@@ -97,25 +93,27 @@ function TabNavigator() {
                 headerShown: false,
                 tabBarStyle: {
                     position: 'absolute',
-                    bottom: 25,
                     left: 20,
                     right: 20,
                     elevation: 0,
+                    height: 60,
                     backgroundColor: '#ECECEC',
                     borderRadius: 15,
-                    height: 60,
                     borderTopWidth: 0,
+                    marginBottom: 30,
+                    paddingBottom: 5,
                     ...styles.shadow
                 },
                 tabBarIcon: ({ focused }) => {
                     const tab = tabs.find((tab) => tab.name === route.name);
 
                     return (
-                        <View style={{ ...tab.styles_name, color : focused ? '#496699' : "#44474B" }}>
+                        <View style={{ ...tab.styles_name, color : focused ? '#496699' : "#44474B", display: 'flex', justifyContent: 'center' }}>
                             <Image
                                 source={tab.source}
                                 style={{ 
                                     ...tab.styles_logo,
+                                    ...tab.styles_name,
                                     tintColor: focused ? '#496699' : "#44474B"
                                 }}
                             />
@@ -134,9 +132,9 @@ function TabNavigator() {
 }
 
 const AppNavigation = () => {
-    const [user, setUser] = useState(null);
-    console.log(user);
-
+    
+    const user = GlobalData?.user;
+    
     return (
         <NavigationContainer>
             <View style={styles.container}>
@@ -249,6 +247,5 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.25,
         shadowRadius: 3.5,
-        elevation: 5
     }
 });

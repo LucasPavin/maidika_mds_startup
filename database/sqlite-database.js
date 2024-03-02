@@ -1,13 +1,29 @@
 import * as SQLite from 'expo-sqlite';
+import jwt from 'react-native-pure-jwt';
+import * as SecureStore from 'expo-secure-store';
 
 const db = SQLite.openDatabase('Maidika.db');
+
+const generateToken = async (userId) => {
+    const token = await jwt.sign(
+        { id: userId }, // this is the token payload
+        'your-secret-key', // secret
+        {
+            alg: 'HS256',
+            exp: Math.floor(Date.now() / 1000) + (60 * 60), // expires in 1 hour
+        }
+    );
+
+    // Store the token securely
+    await SecureStore.setItemAsync('userToken', token);
+};
 
 //function to create 'users' table for Register screen.
 export const createUserTable = () => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
             tx.executeSql(
-                'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, fName TEXT, email TEXT NOT NULL UNIQUE, phone INTEGER, password TEXT);',
+                'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, fName TEXT, email TEXT NOT NULL UNIQUE, phone INTEGER, password TEXT, profileImage BLOB);',
                 [],
                 () => {
                     console.log('users table created or already exists');
@@ -23,20 +39,22 @@ export const createUserTable = () => {
 };
 
 //function to insert data in 'users' table for Register screen.
-export const insertUser = (name, fname, email, phone, password) => {
+export const insertUser = (name, fname, email, phone, password, profileImage) => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
             tx.executeSql(
-                'INSERT INTO users (name, fname, email, phone, password) VALUES (?, ?, ?, ?, ?);',
-                [name, fname, email, phone, password],
-                (_, results) => {
+                'INSERT INTO users (name, fname, email, phone, password, profileImage) VALUES (?, ?, ?, ?, ?, ?);',
+                [name, fname, email, phone, password, profileImage],
+                async (_, results) => {
                     const insertedId = results.insertId;
                     tx.executeSql(
                         'SELECT * FROM users WHERE id = ?;',
                         [insertedId],
-                        (_, selectResults) => {
+                        async (_, selectResults) => {
                             if (selectResults.rows.length > 0) {
                                 const insertedData = selectResults.rows.item(0);
+                                // Générer un token pour le nouvel utilisateur
+                                await generateToken(insertedId);
                                 resolve({ id: insertedId, data: insertedData });
                             } else {
                                 reject('Data not found !');
@@ -56,12 +74,12 @@ export const insertUser = (name, fname, email, phone, password) => {
 };
 
 //function to update users table.
-export const updateUser = (userId, name, fname, password) => {
+export const updateUser = (userId, name, fname, password, profileImage, phoneNumber) => {
     return new Promise((resolve, reject) => {
         db.transaction((tx) => {
             tx.executeSql(
-                'UPDATE users SET name = ?, fname = ?, password = ? WHERE id = ?;',
-                [name, fname, password, userId],
+                'UPDATE users SET name = ?, fname = ?, password = ?, profileImage = ?, phoneNumber = ? WHERE id = ?;',
+                [name, fname, password, profileImage, phoneNumber, userId],
                 (_, results) => {
                     if (results.rowsAffected > 0) {
                         resolve('User updated successfully');

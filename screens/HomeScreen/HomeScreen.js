@@ -6,29 +6,18 @@ import { styles } from './styles';
 
 import Colors from '../../constants/Colors';
 import GlobalData from '../../utils/GlobalData';
+import ButtonTreatmenDetails from '../../components/ButtonTreatmenDetails';
 
 const HomeScreen = () => {
     const navigation = useNavigation();
     const user = GlobalData?.user;
     const [toggle, setToggle] = useState(false);
-    const [currentDate, setCurrentDate] = useState('');
 
-    useEffect(() => {
-        fetchCurrentDate();
-    }, []);
-
-    const fetchCurrentDate = () => {
-        const date = new Date();
-        const day = date.getDate();
-        const monthIndex = date.getMonth();
-        const months = [
-            'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-        ];
-        const month = months[monthIndex];
-        const formattedDate = `${day} ${month}`;
-        setCurrentDate(formattedDate);
-    };
+    const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+    const currentDay = days[new Date().getDay()];
+    const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+    const currentDate = new Date().getDate();
+    const currentMonth = months[new Date().getMonth()];
 
     const handleToggle = () => {
         setToggle(!toggle);
@@ -70,10 +59,18 @@ const HomeScreen = () => {
                         <Text style={styles.nameData}>{user.name} {user.fName}</Text>
                     </View>
                     <View style={styles.rightProfile}>
-                        <Image
-                            source={require('../../assets/images/profile.png')}
-                            style={styles.profileImage}
-                        />
+                        {
+                            user.profileImage ? 
+                            <Image
+                                source={{ uri: user.profileImage }}
+                                style={styles.profileImage}
+                            />
+                            :
+                            <Image
+                                source={require('../../assets/images/profile.png')}
+                                style={styles.profileImage}
+                            />
+                        }
 
                         <TouchableOpacity style={styles.subRight} onPress={() => navigation.navigate('ModifyInformation')}>
                             <Text style={styles.profileText}>Mon Profil</Text>
@@ -82,8 +79,20 @@ const HomeScreen = () => {
                 </View>
                 <View style={styles.secondContainer}>
                     <View style={styles.calendarContainer}>
-                        <Text style={styles.calendarText}>Mercredi</Text>
-                        <Text style={styles.calendarText}>{currentDate}</Text>
+                        <View style={styles.calendarContainerDay}>
+                            <Text style={styles.calendarText}>{currentDay}</Text>
+                        </View>
+                        <View style={styles.calendarContainerDateMonth}>
+                            <Text style={styles.calendarTextDate}>{currentDate}</Text>
+                            <Text style={styles.calendarTextMonth}>{currentMonth}</Text>
+                        </View>
+                        <View style={styles.calendarContainerButton}>
+                            <TouchableOpacity onPress={() => navigation.navigate('Traitement')}>
+                                <View style={styles.calendarContainerButtonView}>
+                                    <Text style={styles.tick}>Voir</Text>
+                                </View>
+                            </TouchableOpacity>
+                        </View>   
                     </View>
                     <View style={styles.med}>
                         <View style={styles.medEntry}>
@@ -116,7 +125,7 @@ const HomeScreen = () => {
 
                 </View>
                 <View style={styles.thirdContainer}>
-                    <TouchableOpacity style={styles.leftContainer} onPress={() => navigation.navigate('DocumentView', { user})}>
+                    <TouchableOpacity style={styles.leftContainer} onPress={() => navigation.navigate('DocumentView',  { user: user })}>
                         <View style={styles.blockImageBlue}>
                             <Image
                                 source={require('../../assets/images/add-photo.png')}

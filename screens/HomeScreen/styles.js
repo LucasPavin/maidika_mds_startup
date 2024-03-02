@@ -103,14 +103,51 @@ export const styles = StyleSheet.create({
         height: windowHeight * 0.17,
         borderTopLeftRadius: 10,
         borderBottomLeftRadius: 10,
+        overflow: 'hidden',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+    },
+    calendarContainerDay : {
+        height: '25%',
+        marginTop: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    calendarContainerDateMonth : {
+        height: '40%',
+    },
+    calendarTextDate: {
+        fontSize: 30,
+        textAlign: 'center',
+        color: 'white',
+    },
+    calendarTextMonth: {
+        fontSize: 22,
+        textAlign: 'center',
+        color: 'white',
+    },
+    calendarContainerButton : {
+        height: '25%',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    calendarContainerButtonView : {
+        backgroundColor: 'white',
+        borderRadius: 10,
+        paddingVertical: 5,
+        paddingHorizontal: 20,
+    },
+    calendarContainerButtonText : {
+        color: 'black',
+        fontSize: 12,
     },
     calendarText: {
+        height: '100%',
         fontSize: 22,
         marginTop: 10,
         marginBottom: 10,
         textAlign: 'center',
         color: 'white',
-
     },
     med: {
         display: 'flex',

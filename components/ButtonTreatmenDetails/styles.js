@@ -13,6 +13,9 @@ const styles = StyleSheet.create({
     redbg : {
         backgroundColor: "#B20000",
     },
+    whitebg : {
+        backgroundColor: Colors.white,
+    },
     greenbg : {
         backgroundColor: Colors.teal,
     },
@@ -23,7 +26,19 @@ const styles = StyleSheet.create({
         color : Colors.white,
         fontSize: 16,
         fontWeight: '300',
-    }
+    },
+    whiteBackground : {
+        color: "#000000",
+        fontSize: 16,
+        fontWeight: '300',
+    },
+    whiteText: {
+        color: '#fff',
+    },
+    blackText: {
+    color: '#000',
+    },
+
 })
 
 export default styles

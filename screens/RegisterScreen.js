@@ -108,6 +108,26 @@ const RegisterScreen = ({ navigation }) => {
         return pass === cpass;
     }
 
+    //function to handle image picker logic.
+    const handleImagePicker = async () => {
+        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (permissionResult.granted === false) {
+            alert('Permission to access camera roll is required!');
+            return;
+        }
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [1, 1],
+            quality: 1,
+        });
+
+        if (!result.canceled) {
+            setAvatar(result.assets[0].uri);
+        }
+    }
+    console.log(avatar);
+
     //function to handle input validations when button is pressed.
     const handleValidation = () => {
         let isValid = true;
@@ -185,25 +205,6 @@ const RegisterScreen = ({ navigation }) => {
             }
         }
         return isValid;
-    }
-
-    //function to handle image picker logic.
-    const handleImagePicker = async () => {
-        const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (permissionResult.granted === false) {
-            alert('Permission to access camera roll is required!');
-            return;
-        }
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [1, 1],
-            quality: 1,
-        });
-
-        if (!result.canceled) {
-            setAvatar(result.assets[0].uri);
-        }
     }
 
     return (
