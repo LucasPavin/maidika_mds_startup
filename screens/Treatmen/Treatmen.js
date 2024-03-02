@@ -18,8 +18,8 @@ const Treatment = ({navigation}) => {
   const [user, setUser] = useState(null);
   const [medication, setMedications] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [refreshKey, setRefreshKey] = useState(0);
   const scrollViewRef = useRef();
+  
 
   const daysToLoad = 2;
 
@@ -29,42 +29,40 @@ const Treatment = ({navigation}) => {
   const isDateWithinInterval = (date, startDate, endDate) => {
     return startDate <= date && date <= endDate;
   };
-
-  const refreshData = () => {
-    setRefreshKey(prevKey => prevKey + 1);
-  }; 
+  
+  const fetchUser = async () => {
+    try {
+      setIsLoading(true);
+  
+      const storedUser = await AsyncStorage.getItem('user');
+      if (!storedUser) {
+        console.log('No user found');
+        return;
+      }
+      const user = JSON.parse(storedUser);
+      setUser(user);
+      const meds = await fetchMedications(user.id);
+      setMedications(meds);      
+      setIsLoading(false);
+  
+    } catch (error) {
+      console.error('Error fetching user or medications:', error);     
+      setIsLoading(false);
+    }
+  };
   
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        setIsLoading(true);
-  
-          const storedUser = await AsyncStorage.getItem('user');
-          console.log('Stored user:', storedUser);
-          if (!storedUser) {
-              console.log('No user found');
-              return;
-          }
-          const user = JSON.parse(storedUser);
-          setUser(user);
-          const meds = await fetchMedications(user.id);
-          setMedications(meds);      
-          setIsLoading(false);
-  
-      } catch (error) {
-          console.error('Error fetching user or medications:', error);     
-          setIsLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, [refreshKey]);
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchUser();
+    });
+    return unsubscribe;
+  }, [navigation]);
 
 
   // Fonction pour générer des jours autour de la date donnée
   const generateDays = (date, daysToGenerate = 180) => {
     let newDays = [];
-    for (let i = - Math.floor(daysToGenerate / 1); i <= Math.floor(daysToGenerate / 1); i++) {
+    for (let i = -Math.floor(daysToGenerate / 1); i <= Math.floor(daysToGenerate / 1); i++) {
       newDays.push(addDays(date, i));
     }
     return newDays;
