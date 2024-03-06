@@ -10,9 +10,6 @@ export const styles = StyleSheet.create({
         width: 40,
         height: 40,
     },
-    containerForm : {
-        marginBottom: 120,
-    },
     imageSelectContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -42,10 +39,6 @@ export const styles = StyleSheet.create({
         paddingHorizontal: 10,
         backgroundColor: Colors.lightGrey,
         width: '100%',
-        // shadowColor: '#171717',
-        // shadowOffset: {width: 0, height: 4},
-        // shadowOpacity: 0.25,
-        // shadowRadius: 2,
     },
     inputPicker: {
         height: 50,

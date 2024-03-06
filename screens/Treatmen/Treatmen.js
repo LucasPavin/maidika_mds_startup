@@ -8,6 +8,9 @@ import { fetchMedications, checkIfMedicationTaken } from '../../database/sqlite-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LottieView from 'lottie-react-native';
 import * as Notifications from 'expo-notifications';
+import { Entypo } from '@expo/vector-icons';
+import Colors from '../../constants/Colors';
+
 
 const { width } = Dimensions.get('window');
 const DAY_WIDTH = width / 5; // Pour afficher 5 jours sur l'écran
@@ -277,10 +280,11 @@ useEffect(() => {
                   </View>
               }
             </View>
-            <View class={styles.btnAddTreatmen}>
-            <TouchableOpacity onPress={() => navigation.navigate("AddTreatmen")}>
-                <Image source={require('../../assets/icons/addTreatmen.png')}/>
-            </TouchableOpacity>
+            <View style={styles.btnAdd}>
+              <TouchableOpacity style={styles.btnAddTreatmen} onPress={() => navigation.navigate("AddTreatmen")}>
+                <Entypo name="plus" size={28} color={Colors.white} />
+                <Text style={{fontWeight: "700", fontSize: 14, color: Colors.white}}>Ajouter rappel</Text>
+              </TouchableOpacity>
             </View>
         </View>
       </View>

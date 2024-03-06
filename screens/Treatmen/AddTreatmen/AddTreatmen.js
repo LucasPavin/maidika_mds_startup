@@ -379,7 +379,7 @@ const AddTreatmen = ({navigation}) => {
             />
           </View>
         </View>
-        <View style={styles.containerBtn}>
+        <View style={{marginTop: 20}}>
           <Button type='blue' onPress={handleSubmit}>Ajouter</Button>
         </View>
       </ScrollView>

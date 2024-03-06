@@ -68,12 +68,28 @@ export const styles = StyleSheet.create({
         fontWeight: '300',
         color: "#8F8F8F"
     },
-    btnAddTreatmen : {
+    btnAdd : {
+        shadowColor: '#171717',
+        shadowOffset: {width: 0, height: 4},
+        shadowOpacity: 0.25,
+        shadowRadius: 2,
         position: 'absolute',
+        left: 0,
         right: 0,
-        bottom: 0,
-        width: 20,
-        height: 20,
+        bottom: 130,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    btnAddTreatmen : {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContenta: 'center',
+        alignItems: 'center',
+        columnGap: 10,
+        backgroundColor: Colors.bluePrimary,
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 10,
     },
     medicationsContainer: {
         marginVertical: 20,
