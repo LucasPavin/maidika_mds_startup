@@ -40,6 +40,14 @@ const tabs = [
         },
     },
     {
+        name: 'Traitement',
+        component: Treatmen,
+        source: require('../assets/icons/pillule.png'),
+        styles_name: {
+            fontSize: 14
+        },
+    },
+    {
         name: 'Ordonnances',
         component: DocumentView,
         source: require('../assets/images/b3.png'),
@@ -47,14 +55,6 @@ const tabs = [
             width: 25,
             height: 25,
         },
-        styles_name: {
-            fontSize: 14
-        },
-    },
-    {
-        name: 'Traitement',
-        component: Treatmen,
-        source: require('../assets/icons/pillule.png'),
         styles_name: {
             fontSize: 14
         },

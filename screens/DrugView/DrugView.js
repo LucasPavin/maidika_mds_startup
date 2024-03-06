@@ -50,7 +50,7 @@ const DrugView = ({navigation}) => {
                     <View style={styles.listDrugs}>
                         <TouchableOpacity  onPress={() => openModal(item)}>
                             <Text style={styles.titleDrug}>{item.name_generic} ({item.brand})</Text>
-                            <Text>Description : {item.description.split(' ').slice(0, 25).join(' ')}...</Text>
+                            <Text style={styles.descDrug}>{item.description.split(' ').slice(0, 25).join(' ')}...</Text>
                         </TouchableOpacity>
                     </View>
                 )}

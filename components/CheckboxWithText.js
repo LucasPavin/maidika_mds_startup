@@ -10,7 +10,7 @@ const CheckboxWithText = ({ isChecked, onPress }) => {
                     {isChecked && <Text style={styles.tick}>✓</Text>}
                 </View>
             </TouchableOpacity>
-            <Text style={styles.text}>Rester connecté</Text>
+            <Text style={styles.text}>Restez connecté</Text>
         </View>
     );
 };
@@ -43,7 +43,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     text: {
-        fontSize: 16,
         marginTop: windowHeight * 0.02,
         color: Colors.lightGrey,
     },

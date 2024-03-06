@@ -181,7 +181,7 @@ export const fetchMedications = (userId) => {
                     var medications = [];
                     for (let i = 0; i < results.rows.length; ++i) {
                         medications.push(results.rows.item(i));
-                        console.log('medications:', medications);
+                        // console.log('medications:', medications);
                     }
                     resolve(medications);
                 },

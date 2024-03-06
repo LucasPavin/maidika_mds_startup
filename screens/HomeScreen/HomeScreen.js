@@ -24,32 +24,38 @@ const HomeScreen = ({navigation}) => {
         GlobalData.user = null;
         navigation.replace('Login');
     };
-
+    
     const fetchMedicationsForToday = async () => {
-        const userParse = JSON.parse(user);
+        const userParse = typeof user === 'string' ? JSON.parse(user) : user;
+    
+        if(!userParse) {
+            console.log('No user found');
+            return;
+        }
+    
         const meds = await fetchMedications(userParse.id);
-      
+    
         if (!Array.isArray(meds)) {
           console.log('fetchMedications did not return an array');
           return;
         }
-      
+    
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); 
+    
         const medsForToday = meds.filter(med => {
-          const startDate = new Date(med.startDate);
-      
-          if (med.endDate) {
-            const endDate = new Date(med.endDate);
-            endDate.setHours(23, 59, 59, 999);
-            return isToday(startDate) || (startDate <= new Date() && new Date() <= endDate);
-          } else {
-            return isSameDay(new Date(), startDate);
-          }
+            const dateToTake = new Date(med.startDate); 
+            dateToTake.setHours(0, 0, 0, 0);
+    
+            return isSameDay(today, dateToTake);
         });
-      
-        setMedications(medsForToday);
-      };
-      
-      fetchMedicationsForToday().catch(error => console.error(error));
+    
+        setMedications(medsForToday.slice(0, 2));
+    };
+    
+    useEffect(() => {
+        fetchMedicationsForToday().catch(error => console.error(error));
+    }, [user]); 
   
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', fetchMedicationsForToday);
@@ -91,7 +97,7 @@ const HomeScreen = ({navigation}) => {
                 <View style={styles.profileContainer}>
                     <View style={styles.leftProfile}>
                         <Text style={styles.welcome}>Bonne journée,</Text>
-                        <Text style={styles.nameData}>{user.name} {user.fName}</Text>
+                        <Text style={styles.nameData}>{user.fName} {user.name}</Text>
                     </View>
                     <View style={styles.rightProfile}>
                         {
@@ -107,7 +113,7 @@ const HomeScreen = ({navigation}) => {
                             />
                         }
 
-                        <TouchableOpacity style={styles.subRight} onPress={() => navigation.navigate('ModifyInformation')}>
+                        <TouchableOpacity style={styles.subRight} onPress={() => navigation.navigate('Mon profil')}>
                             <Text style={styles.profileText}>Mon Profil</Text>
                         </TouchableOpacity>
                     </View>
@@ -131,20 +137,19 @@ const HomeScreen = ({navigation}) => {
                     </View>
                     <View style={styles.med}>
                         { medications.length > 0 ? (
-                            
-                            medications.slice(0, 2).map((med, index) => (
-                            <View key={index} style={styles.medEntry}>
-                                <View style={styles.medImageContainer}>
-                                    <Image style={{ width: 20, height: 20}} source={medicationImages[med.medicationType]} />
-                                </View>
-                                <View style={styles.medDetails}>
-                                    <Text style={styles.medName}>{med.medicationName}</Text>
-                                    <View style={styles.detailsMedInfo}>
-                                        <Text style={styles.medDescription}>{med.dosage} {med.medicationType}</Text>
-                                        <Text style={styles.medAdditionalInfo}>{med.timeToTake}</Text>
+                            medications.slice(0,2).map((med, index) => (
+                                <View key={index} style={styles.medEntry}>
+                                    <View style={styles.medImageContainer}>
+                                        <Image style={{ width: 20, height: 20}} source={medicationImages[med.medicationType]} />
+                                    </View>
+                                    <View style={styles.medDetails}>
+                                        <Text style={styles.medName}>{med.medicationName}</Text>
+                                        <View style={styles.detailsMedInfo}>
+                                            <Text style={styles.medDescription}>{med.dosage} {med.medicationType}</Text>
+                                            <Text style={styles.medAdditionalInfo}>{med.timeToTake}</Text>
+                                        </View>
                                     </View>
                                 </View>
-                            </View>
                             ))
                         ) : (
                             <View style={styles.noMedicationsMessage}>
@@ -152,7 +157,6 @@ const HomeScreen = ({navigation}) => {
                             </View>
                         )}
                     </View>
-
                 </View>
                 <View style={styles.thirdContainer}>
                     <TouchableOpacity style={styles.leftContainer} onPress={() => navigation.navigate('DocumentView',  { user: user })}>
@@ -165,7 +169,7 @@ const HomeScreen = ({navigation}) => {
                             <Text style={styles.bottomText}>Mes ordonnances</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.rightContainer}  onPress={() => navigation.navigate('DrugView',  { user: user })}>
+                    <TouchableOpacity style={styles.rightContainer}  onPress={() => navigation.navigate('DrugView')}>
                         <View style={styles.blockImageYellow}>
                             <Image
                                 source={require('../../assets/images/drugs.png')}

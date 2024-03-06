@@ -33,7 +33,7 @@ export const styles = StyleSheet.create({
         padding: 10,
     }, 
     listDrugs : {
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blue,
         shadowColor: '#171717',
         shadowOffset: {width: 0, height: 4},
         shadowOpacity: 0.25,
@@ -71,6 +71,11 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         paddingBottom: 10,
+        color: Colors.white,
+    },
+    descDrug : {
+        color: Colors.white,
+        fontSize: 12,
     },
     nameGeneric : {
         fontWeight: 'bold',
