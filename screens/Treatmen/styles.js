@@ -126,6 +126,15 @@ export const styles = StyleSheet.create({
     },
     medicationContainerDetailsButtonText: {
         color: Colors.white,
+    },
+    medicationTaken: {
+        backgroundColor: 'green', // ou toute autre couleur que vous voulez
+    },
+    containerNothingTreatmen: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 400,
     }
 });
 

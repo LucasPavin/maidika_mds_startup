@@ -1,23 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, Alert, TouchableOpacity, Switch, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { isToday, isSameDay } from 'date-fns';
 import { styles } from './styles';
-
+import {fetchMedications} from '../../database/sqlite-database';
 import Colors from '../../constants/Colors';
 import GlobalData from '../../utils/GlobalData';
-import ButtonTreatmenDetails from '../../components/ButtonTreatmenDetails';
 
-const HomeScreen = () => {
-    const navigation = useNavigation();
+const HomeScreen = ({navigation}) => {
     const user = GlobalData?.user;
     const [toggle, setToggle] = useState(false);
-
     const days = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
     const currentDay = days[new Date().getDay()];
     const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
     const currentDate = new Date().getDate();
     const currentMonth = months[new Date().getMonth()];
+    const [medications, setMedications] = useState([]);
 
     const handleToggle = () => {
         setToggle(!toggle);
@@ -26,6 +23,44 @@ const HomeScreen = () => {
     const handleLogout = () => {
         GlobalData.user = null;
         navigation.replace('Login');
+    };
+
+    const fetchMedicationsForToday = async () => {
+        const userParse = JSON.parse(user);
+        const meds = await fetchMedications(userParse.id);
+      
+        if (!Array.isArray(meds)) {
+          console.log('fetchMedications did not return an array');
+          return;
+        }
+      
+        const medsForToday = meds.filter(med => {
+          const startDate = new Date(med.startDate);
+      
+          if (med.endDate) {
+            const endDate = new Date(med.endDate);
+            endDate.setHours(23, 59, 59, 999);
+            return isToday(startDate) || (startDate <= new Date() && new Date() <= endDate);
+          } else {
+            return isSameDay(new Date(), startDate);
+          }
+        });
+      
+        setMedications(medsForToday);
+      };
+      
+      fetchMedicationsForToday().catch(error => console.error(error));
+  
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', fetchMedicationsForToday);
+        return unsubscribe;
+      }, [navigation]);
+
+    const medicationImages = {
+        'Comprimé': require('../../assets/treatmen/comprimes.png'),
+        'Géllule': require('../../assets/treatmen/gellule.png'),
+        'Liquide': require('../../assets/treatmen/liquide.png'),
+        'Crème': require('../../assets/treatmen/creme.png'),
     };
 
     return (
@@ -95,32 +130,27 @@ const HomeScreen = () => {
                         </View>   
                     </View>
                     <View style={styles.med}>
-                        <View style={styles.medEntry}>
-                            <View style={styles.medImageContainer}>
-                                <Image
-                                    source={require('../../assets/images/aspirine.png')}
-                                    style={styles.medImage}
-                                />
+                        { medications.length > 0 ? (
+                            
+                            medications.slice(0, 2).map((med, index) => (
+                            <View key={index} style={styles.medEntry}>
+                                <View style={styles.medImageContainer}>
+                                    <Image style={{ width: 20, height: 20}} source={medicationImages[med.medicationType]} />
+                                </View>
+                                <View style={styles.medDetails}>
+                                    <Text style={styles.medName}>{med.medicationName}</Text>
+                                    <View style={styles.detailsMedInfo}>
+                                        <Text style={styles.medDescription}>{med.dosage} {med.medicationType}</Text>
+                                        <Text style={styles.medAdditionalInfo}>{med.timeToTake}</Text>
+                                    </View>
+                                </View>
                             </View>
-                            <View style={styles.medDetails}>
-                                <Text style={styles.medName}>Aspirine</Text>
-                                <Text style={styles.medDescription}>1 pilule</Text>
-                                <Text style={styles.medAdditionalInfo}>10h00</Text>
+                            ))
+                        ) : (
+                            <View style={styles.noMedicationsMessage}>
+                                <Text style={{textAlign: 'center'}}>Aucun médicament à prendre aujourd'hui.</Text>
                             </View>
-                        </View>
-                        <View style={styles.medEntry}>
-                            <View style={styles.medImageContainer}>
-                                <Image
-                                    source={require('../../assets/images/doliprane.png')}
-                                    style={styles.medImage}
-                                />
-                            </View>
-                            <View style={styles.medDetails}>
-                                <Text style={styles.medName}>Doliprane</Text>
-                                <Text style={styles.medDescription}>3 gelules</Text>
-                                <Text style={styles.medAdditionalInfo}>19h00</Text>
-                            </View>
-                        </View>
+                        )}
                     </View>
 
                 </View>
@@ -128,21 +158,21 @@ const HomeScreen = () => {
                     <TouchableOpacity style={styles.leftContainer} onPress={() => navigation.navigate('DocumentView',  { user: user })}>
                         <View style={styles.blockImageBlue}>
                             <Image
-                                source={require('../../assets/images/add-photo.png')}
+                                source={require('../../assets/images/documents.png')}
                             />
                         </View>
                         <View style={styles.leftBottomTextContainer}>
-                            <Text style={styles.bottomText}>Scanner votre ordonnance</Text>
+                            <Text style={styles.bottomText}>Mes ordonnances</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.rightContainer}>
+                    <TouchableOpacity style={styles.rightContainer}  onPress={() => navigation.navigate('DrugView',  { user: user })}>
                         <View style={styles.blockImageYellow}>
                             <Image
-                                source={require('../../assets/images/bell.png')}
+                                source={require('../../assets/images/drugs.png')}
                             />
                         </View>
                         <View style={styles.rightBottomTextContainer}>
-                            <Text style={styles.bottomText}>Scanner votre ordonnance</Text>
+                            <Text style={styles.bottomText}>Analyse de médicaments</Text>
                         </View>
                     </TouchableOpacity>
                 </View>

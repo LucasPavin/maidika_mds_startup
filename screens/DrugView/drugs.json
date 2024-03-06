@@ -1,0 +1,77 @@
+{
+    "drugs": [
+        {
+            "name_generic": "Paracétamol",
+            "brand": "Doliprane",
+            "description": "Le Doliprane est utilisé pour réduire la douleur et la fièvre. Il peut être utilisé dans diverses situations, telles que les maux de tête, les douleurs dentaires, les règles douloureuses, les états grippaux, les douleurs musculaires, etc. Il est disponible sous différentes formes, y compris les comprimés, les gélules, le sirop pour enfants, et les suppositoires.",
+            "risks": [
+                "Surdosage : Le paracétamol peut être toxique pour le foie en cas de surdosage. Une dose excessive peut entraîner des lésions hépatiques graves et potentiellement mortelles.",
+                "Réactions allergiques : Bien que rares, certaines personnes peuvent avoir des réactions allergiques au paracétamol.",
+                "Interactions médicamenteuses : Le paracétamol peut interagir avec d'autres médicaments, ce qui peut affecter leur efficacité ou augmenter le risque d'effets secondaires."
+            ],
+            "doses": [
+                "Adultes et enfants de plus de 50 kg (environ 15 ans et plus) : La dose habituelle est de 1 000 mg (1 gramme) par prise, à renouveler si besoin après au moins 4 heures, sans dépasser 3 000 mg (3 grammes) par jour.",
+                "Enfants : La dose dépend du poids de l'enfant, généralement autour de 15 mg/kg, toutes les 6 à 8 heures, sans dépasser 60 mg/kg par jour."
+            ]
+        },
+        {
+            "name_generic": "Tramadol",
+            "brand": "Ultram",
+            "description": "Le Tramadol agit sur le système nerveux central pour soulager la douleur. Il est souvent prescrit quand des analgésiques moins forts ne sont pas suffisants pour contrôler la douleur. Le Tramadol est disponible sous différentes formes, y compris les comprimés, les gélules à libération prolongée, et la solution orale.",
+            "risks": [
+                "Dépendance et abus : Comme avec d'autres opioïdes, il y a un risque de dépendance, d'abus et de mésusage, pouvant conduire à une overdose et à la mort.",
+                "Effets secondaires : Les effets secondaires courants incluent nausées, vertiges, somnolence, constipation, maux de tête, et bouche sèche. Des effets secondaires plus graves peuvent inclure des convulsions, des réactions allergiques sévères, et une dépression respiratoire.",
+                "Syndrome de sevrage : L'arrêt soudain du tramadol après une utilisation prolongée peut entraîner des symptômes de sevrage.",
+                "Interactions médicamenteuses : Le tramadol peut interagir avec de nombreux autres médicaments, augmentant le risque d'effets secondaires, notamment avec les inhibiteurs de la MAO, les antidépresseurs, et les médicaments affectant le système nerveux central."
+            ],
+            "doses": [
+                "Adultes : La dose initiale habituelle est de 50 à 100 mg toutes les 4 à 6 heures, selon les besoins pour soulager la douleur. La dose maximale quotidienne ne doit généralement pas dépasser 400 mg.",
+                "Formes à libération prolongée : Utilisées pour la douleur chronique, avec une posologie qui peut être ajustée par un professionnel de santé."
+            ]
+        },
+        {
+            "name_generic": "Ibuprofène",
+            "brand": "Advil",
+            "description": "L'ibuprofène est utilisé pour soulager divers types de douleurs, y compris les maux de tête, la douleur dentaire, les crampes menstruelles, les douleurs musculaires, ou les douleurs dues à l'arthrite. Il est également efficace pour réduire la fièvre et soulager les symptômes de rhume et de grippe. L'ibuprofène agit en inhibant les enzymes (COX-1 et COX-2) qui contribuent à la production de prostaglandines, substances impliquées dans l'inflammation et la douleur.",
+            "risks": [
+                "Effets gastro-intestinaux : Peut causer des problèmes gastro-intestinaux, tels que des ulcères ou des saignements, surtout lorsqu'il est utilisé à long terme ou à des doses élevées.",
+                "Risques cardiaques et vasculaires : Une utilisation prolongée à des doses élevées peut être associée à un risque accru d'accidents cardiovasculaires, tels que les crises cardiaques ou les accidents vasculaires cérébraux.",
+                "Réactions allergiques : Bien que rares, certaines personnes peuvent avoir des réactions allergiques à l'ibuprofène, incluant de l'urticaire, de la difficulté à respirer, et un gonflement du visage, de la langue ou de la gorge.",
+                "Effets rénaux : L'usage prolongé d'ibuprofène peut affecter la fonction rénale.",
+                "Interactions médicamenteuses : L'ibuprofène peut interagir avec d'autres médicaments, y compris les anticoagulants, certains médicaments contre l'hypertension, et d'autres AINS."
+            ],
+            "doses": [
+                "Adultes et enfants de plus de 12 ans : La dose habituelle est de 200 à 400 mg toutes les 4 à 6 heures, selon les besoins. Il est important de ne pas dépasser la dose maximale de 1200 mg à 2400 mg par jour, selon les indications et les conseils d'un professionnel de santé.",
+                "Enfants : La posologie chez les enfants est généralement basée sur le poids corporel, avec une recommandation courante de 10 mg/kg toutes les 6 à 8 heures, sans dépasser la dose maximale recommandée."
+            ]
+        },
+        {
+            "name_generic": "Paracétamol",
+            "brand": "Efferalgan",
+            "description": "L'Efferalgan est disponible sous plusieurs formes, y compris les comprimés, les suppositoires, et la solution buvable, permettant une utilisation flexible en fonction des besoins du patient et de sa capacité à ingérer des médicaments. Il est indiqué pour le soulagement des douleurs d'intensités légère à modérée, telles que les maux de tête, les douleurs dentaires, les douleurs musculaires, et pour réduire la fièvre.",
+            "risks": [
+                "Surdosage : Comme avec tout médicament contenant du paracétamol, le risque principal est lié à un surdosage, qui peut causer de graves dommages au foie. Il est crucial de ne pas dépasser la dose recommandée.",
+                "Réactions allergiques : Des réactions allergiques au paracétamol sont possibles, bien qu'elles soient rares.",
+                "Interactions médicamenteuses : L'Efferalgan peut interagir avec d'autres médicaments, notamment ceux affectant le foie ou la manière dont le paracétamol est métabolisé."
+            ],
+            "doses": [
+                "Adultes : La dose habituelle est de 500 mg à 1 g (1000 mg) par prise, à renouveler si nécessaire après au moins 4 heures, sans dépasser 4 g (4000 mg) par jour.",
+                "Enfants : La posologie chez les enfants est généralement calculée en fonction du poids corporel, avec une recommandation courante de 15 mg/kg toutes les 6 heures, sans dépasser 60 mg/kg par jour."
+            ]
+        },
+        {
+            "name_generic": "Desloratadine",
+            "brand": "Aerius",
+            "description": "La desloratadine agit en bloquant l'action de l'histamine, une substance dans le corps qui provoque des symptômes allergiques. AERIUS est efficace pour soulager les symptômes tels que les éternuements, l'écoulement ou la congestion nasale, les démangeaisons nasales et oculaires, et les démangeaisons et rougeurs de la peau. Un des avantages des antihistaminiques de deuxième génération, comme la desloratadine, est qu'ils provoquent généralement moins de somnolence que les antihistaminiques de première génération.",
+            "risks": [
+                "Fatigue",
+                "Sécheresse de la bouche",
+                "Maux de tête",
+                "Des effets secondaires plus graves sont rares, mais peuvent inclure des réactions allergiques sévères. Il est important de consulter un professionnel de santé si vous ressentez des symptômes inhabituels après avoir pris ce médicament."
+            ],
+            "doses": [
+                "La posologie recommandée d'AERIUS pour les adultes et les enfants de 12 ans et plus est généralement de 5 mg une fois par jour. Pour les enfants plus jeunes, la dose peut varier, et il existe des formulations spécifiques (telles que des sirops) adaptées à leur utilisation. Il est crucial de suivre les instructions de dosage fournies avec le médicament ou celles données par un professionnel de santé."
+            ]
+        }
+    ]
+}

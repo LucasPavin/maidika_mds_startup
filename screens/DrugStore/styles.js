@@ -35,11 +35,22 @@ const styles = StyleSheet.create({
   },
   maps: {
     flex: 1,
-    backgroundColor: Colors.blue,
     width: '100%',
+    height: '100%',
+    paddingBottom: 5,
+    backgroundColor: Colors.blue,
     borderRadius: 10,
-    padding: 0,
-    margin: 0
+    margin: 0, 
+  },
+  mapsImage: {
+    width: 75,
+    height: '80%',
+  },
+  mapsText: {
+    height: '20%',
+    textAlign: 'center',
+    fontSize: 10,
+    color: Colors.white,
   },
   results: {
     fontSize: 14,

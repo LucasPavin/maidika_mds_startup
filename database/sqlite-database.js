@@ -7,7 +7,7 @@ const db = SQLite.openDatabase('Maidika.db');
 const generateToken = async (userId) => {
     const token = await jwt.sign(
         { id: userId },
-        'votre-clé-secrète',
+        'your-secret-key',
         {
             alg: 'HS256',
             exp: Math.floor(Date.now() / 1000) + (60 * 60),
@@ -52,6 +52,7 @@ export const insertUser = (name, fname, email, phone, password, profileImage) =>
                         async (_, selectResults) => {
                             if (selectResults.rows.length > 0) {
                                 const insertedData = selectResults.rows.item(0);
+                                // Générer un token pour le nouvel utilisateur
                                 await generateToken(insertedId);
                                 resolve({ id: insertedId, data: insertedData });
                             } else {

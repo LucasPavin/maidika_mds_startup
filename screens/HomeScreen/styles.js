@@ -108,16 +108,12 @@ export const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     calendarContainerDay : {
-        height: '25%',
         marginTop: 10,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    calendarContainerDateMonth : {
-        height: '40%',
-    },
     calendarTextDate: {
-        fontSize: 30,
+        fontSize: 34,
         textAlign: 'center',
         color: 'white',
     },
@@ -142,10 +138,8 @@ export const styles = StyleSheet.create({
         fontSize: 12,
     },
     calendarText: {
-        height: '100%',
         fontSize: 22,
-        marginTop: 10,
-        marginBottom: 10,
+        fontWeight: '300',
         textAlign: 'center',
         color: 'white',
     },
@@ -187,14 +181,22 @@ export const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: 'bold',
     },
+    detailsMedInfo : {
+        flexDirection: 'row',
+        width: '100%',
+        marginTop: 5,
+    },
     medDescription: {
         fontSize: 11,
+        width: 50,
         marginTop: 2,
+        width: '60%',
+        color: 'gray',
     },
     medAdditionalInfo: {
         fontSize: 11,
-        color: 'gray',
-        marginLeft: 80,
+        marginLeft: 10,
+        width: '30%'
     },
     drugContainer: {
         
@@ -247,7 +249,7 @@ export const styles = StyleSheet.create({
         shadowRadius: 2,
     },
     blockImageYellow : {
-        backgroundColor: Colors.lightMustard,
+        backgroundColor: '#B6A28345',
         width: '100%',
         height: windowHeight * 0.12,
         borderTopLeftRadius: 10,
@@ -261,7 +263,7 @@ export const styles = StyleSheet.create({
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
         padding: 5,
-        backgroundColor: Colors.mustard,
+        backgroundColor: "#B6A283",
     },
     bottomText: {
         color: 'white',

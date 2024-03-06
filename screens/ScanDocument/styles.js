@@ -61,9 +61,6 @@ export const styles = StyleSheet.create({
       paddingBottom: 40,
     },
     backButton: {
-      position: 'absolute',
-      top: "7%",
-      left: "5%",
       backgroundColor: Colors.lightGrey,
       padding: 5,
       borderRadius: 50,

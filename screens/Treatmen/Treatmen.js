@@ -4,7 +4,7 @@ import { format, addDays, subDays, isToday, isSameDay, startOfWeek, eachDayOfInt
 import { fr } from 'date-fns/locale';
 import Header from '../../components/Header';
 import { styles } from './styles';
-import { fetchMedications } from '../../database/sqlite-database';
+import { fetchMedications, checkIfMedicationTaken } from '../../database/sqlite-database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LottieView from 'lottie-react-native';
 import * as Notifications from 'expo-notifications';
@@ -20,6 +20,22 @@ const Treatment = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(true);
   const scrollViewRef = useRef();
   
+useEffect(() => {
+  const checkTaken = async () => {
+    if (medication) {
+      medication.map(async med => {
+        const taken = await checkIfMedicationTaken(med.medicationId, med.date);
+        if (taken) {
+          console.log(`Le médicament ${med.medicationId} a été pris.`);
+        } else {
+          console.log(`Le médicament ${med.medicationId} n'a pas été pris.`);
+        }
+      });
+    }
+  };
+
+  checkTaken();
+}, [medication]);
 
   const daysToLoad = 2;
 
@@ -174,6 +190,7 @@ const Treatment = ({navigation}) => {
                         medication && medication.length > 0 && (
                           medication
                             .filter(med => {
+                              console.log(med.isTaken);
                               const startDate = new Date(med.startDate);        
                               selectedDate.setHours(0, 0, 0, 0);
                               if (med.endDate) {
@@ -224,7 +241,7 @@ const Treatment = ({navigation}) => {
                                 
                                   // Retournez le composant JSX
                                   return (
-                                    <View key={index} style={styles.medicationContainer}>
+                                    <View key={index} style={[styles.medicationContainer, med.isTaken === 1 && styles.medicationTaken]}>
                                       <View style={styles.medicationContainerImage}>
                                         <Image style={{ width: 40, height: 40}} source={medicationImages[med.medicationType]} />
                                       </View>
@@ -250,7 +267,9 @@ const Treatment = ({navigation}) => {
                                 })
 
                             ) : (
-                              <Text>Aucun traitement à prendre aujourd'hui</Text>
+                              <View style={styles.containerNothingTreatmen}>
+                                <Text>Aucun traitement à prendre aujourd'hui</Text> 
+                              </View>
                             )
                         )
                       }

@@ -112,7 +112,7 @@ const LoginScreen = () => {
                         <Text style={[styles.signupText, styles.signupLink]}>Inscrivez-vous ici</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={styles.connectTextContainer}>
+                {/* <View style={styles.connectTextContainer}>
                     <Text style={styles.connectText}>Connecte-toi avec:</Text>
                     <View style={styles.socialIconsContainer}>
                         <TouchableOpacity>
@@ -125,7 +125,7 @@ const LoginScreen = () => {
                             <Image source={require('../assets/images/twitter.png')} style={styles.socialIcon} />
                         </TouchableOpacity>
                     </View>
-                </View>
+                </View> */}
             </View>
         </View>
     );

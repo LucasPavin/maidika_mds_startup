@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Alert, FlatList, Text, TextInput, ActivityIndicator, Image, TouchableOpacity, Linking, Animated } from 'react-native';
+import { View, Alert, FlatList, Text, TextInput, ActivityIndicator, Button, Image, TouchableOpacity, Linking, Animated } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import pharmaciesData from './json/pharmacies.json'
-import Button from '../../components/Button'
 import Header from '../../components/Header';
 import styles from './styles';
 import LottieView from 'lottie-react-native';
@@ -104,7 +103,6 @@ export const getMinutesFromTime = (timeString) => {
   const [hours, minutes] = timeString.split(':').map(Number);
   return hours * 60 + minutes;
 };
-// rendre l'appel possible
 export const makeCall = (phoneNumber) => {
   let cleanedPhoneNumber = phoneNumber.replace(/\s+/g, '').replace(/-+/g, '');
   if (cleanedPhoneNumber) {
@@ -120,7 +118,6 @@ export const makeCall = (phoneNumber) => {
       .catch((err) => console.error('Une erreur s\'est produite', err));
   }
 };
-// rendre l'email
 export const sendEmail = (emailAddress) => {
   const url = `mailto:${emailAddress}`;
   Linking.canOpenURL(url)
@@ -133,36 +130,27 @@ export const sendEmail = (emailAddress) => {
     })
     .catch((err) => console.error('Une erreur s\'est produite: ', err));
 };
-// Fonction qui retourne le numéro de téléphone au bon format
 export const formatPhoneNumber = (phoneNumber) => {
   if (!phoneNumber) {
     return 'Numéro non renseigné.';
   }
-  // Supprimer les espaces et les tirets si présents
   let cleaned = ('' + phoneNumber).replace(/\s+/g, '').replace(/-+/g, '');
-  // Gérer le formatage pour les numéros français
   if (cleaned.match(/^\+33/)) {
-    // Supprimer le préfixe +33
     cleaned = cleaned.substring(3);
-    // Ajouter un 0 au début
     cleaned = '0' + cleaned;
   }
-  // Insérer des espaces tous les deux chiffres
   const formatted = cleaned.match(/.{1,2}/g).join(' ');
 
   return formatted;
 }
-
 const ListDrugStore = ({navigation}) => {
   const [pharmacies, setPharmacies] = useState([]);
   const [userPosition, setUserPosition] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  // Nombre de kilomètres autour de l'utilisateur pour trouver les pharmacies
   const perimeter = 5;
 
   // Animation sur le texte "Géolocalisation en cours..."
   const fadeAnim = useRef(new Animated.Value(0)).current; 
-
 
   useEffect(() => {
     (async () => {
@@ -193,7 +181,7 @@ const ListDrugStore = ({navigation}) => {
             ...pharmacy,
             latitude,
             longitude,
-            phoneNumber: pharmacy.phone ? formatPhoneNumber(pharmacy.phone) : 'Non disponible', // Vérifiez si pharmacy.phone n'est pas undefined
+            phoneNumber: pharmacy.phone ? formatPhoneNumber(pharmacy.phone) : 'Non disponible',
             email: pharmacy.email,
           };
         })
@@ -235,6 +223,12 @@ const ListDrugStore = ({navigation}) => {
       }
     ).start(); 
   }, [fadeAnim]) 
+  const [text, setText] = useState('');
+
+  const clearText = () => setText('');
+  const search = () => {
+    // Votre logique de recherche ici
+  };
 
   return (
     <>
@@ -242,9 +236,11 @@ const ListDrugStore = ({navigation}) => {
       <View style={styles.container}>
         <View style={styles.containerTop}>
           <TextInput
-            style={styles.containerTopInput}
+            style={styles.containerTopSearchInput}
             inlineImageLeft='search_icon'
             placeholder='Pharmacie à proximité'
+            value={text}
+            onChangeText={setText}
           />
           {
             isLoading ? 
@@ -253,8 +249,8 @@ const ListDrugStore = ({navigation}) => {
               <>
                 <TouchableOpacity onPress={() => navigation.navigate('MapsLocation', { userPosition })}>
                   <View style={styles.maps}>
-                    <Image source={require('../../assets/pharmacies/maps.png')} resizeMode="cover"/>
-                    <Text>La carte</Text>
+                    <Image style={styles.mapsImage} source={require('../../assets/pharmacies/maps.png')} resizeMode="cover"/>
+                    <Text style={styles.mapsText}>La carte</Text>
                   </View>
                 </TouchableOpacity>
               </>
@@ -273,7 +269,7 @@ const ListDrugStore = ({navigation}) => {
                 />
                 <Animated.Text
                   style={{
-                    opacity: fadeAnim,  // Relier l'opacité à l'état animé
+                    opacity: fadeAnim,
                     fontSize: 28,
                   }}>
                   Géolocalisation en cours...
@@ -290,6 +286,7 @@ const ListDrugStore = ({navigation}) => {
                     <View style={styles.flastListLeft}>
                       <Text style={styles.leftTitle}>{item.name}</Text>
                       <Text>{isOpenNow(item.opening_hours)}</Text>
+                      <Text>{item.address}</Text>
                     </View>
                     <View style={styles.flastListRight}>
                       {
