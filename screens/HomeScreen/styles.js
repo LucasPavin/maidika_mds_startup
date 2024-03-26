@@ -16,9 +16,24 @@ export const styles = StyleSheet.create({
         marginTop: windowHeight * 0.04,
         height: 60,
     },
-    imageContainer: {
-        flexDirection: 'row',
+    headerContainerLogout : {
+        width: windowWidth * 0.25,    
+        direction: 'column',
+        justifyContent: 'center',
         alignItems: 'center',
+        gap: 10,
+    },
+    logout: {
+        fontSize: 12,
+    },
+    accessibilite: {
+        fontSize: 10,
+        color: Colors.blueTertiary,
+        fontWeight: 'bold',
+    },
+    imageContainer: {
+        alignItems: 'center',
+        width: windowWidth * 0.45,    
     },
     image: {
         width: 20,
@@ -26,7 +41,7 @@ export const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     secondImage: {
-        width: 70,
+        width: 60,
         height: 70,
         marginHorizontal: windowHeight * 0.099,
     },

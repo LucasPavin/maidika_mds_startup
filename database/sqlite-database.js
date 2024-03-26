@@ -181,7 +181,7 @@ export const fetchMedications = (userId) => {
                     var medications = [];
                     for (let i = 0; i < results.rows.length; ++i) {
                         medications.push(results.rows.item(i));
-                        // console.log('medications:', medications);
+                        console.log('medications:', medications);
                     }
                     resolve(medications);
                 },
@@ -266,9 +266,9 @@ export const checkIfMedicationTaken = (medicationId, dateTaken) => {
                 [medicationId, dateTaken],
                 (_, result) => {
                     if (result.rows.length > 0) {
-                        resolve(true); // Le médicament a été pris
+                        resolve(true);
                     } else {
-                        resolve(false); // Le médicament n'a pas été pris
+                        resolve(false);
                     }
                 },
                 (_, error) => {

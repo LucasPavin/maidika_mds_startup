@@ -11,7 +11,7 @@ const Settings = ({navigation}) => {
     
     const handleLogout = () => {
         GlobalData.user = null;
-        navigation.replace('Login');
+        navigation.replace('Onboarding');
     };
 
     return (

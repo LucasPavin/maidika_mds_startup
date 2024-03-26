@@ -6,6 +6,7 @@ import pharmaciesData from './json/pharmacies.json'
 import Header from '../../components/Header';
 import styles from './styles';
 import LottieView from 'lottie-react-native';
+import Colors from '../../constants/Colors';
 
 const proj4 = require('proj4');
 const mercator = 'EPSG:3857';
@@ -269,8 +270,10 @@ const ListDrugStore = ({navigation}) => {
                 />
                 <Animated.Text
                   style={{
+                    marginTop: 20,
                     opacity: fadeAnim,
-                    fontSize: 28,
+                    fontSize: 20,
+                    color: Colors.blue
                   }}>
                   Géolocalisation en cours...
                 </Animated.Text>

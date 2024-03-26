@@ -10,6 +10,9 @@ export const styles = StyleSheet.create({
         width: 40,
         height: 40,
     },
+    containerForm: {
+        height: '90%',
+    },
     imageSelectContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',

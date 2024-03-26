@@ -11,7 +11,6 @@ import * as Notifications from 'expo-notifications';
 import { Entypo } from '@expo/vector-icons';
 import Colors from '../../constants/Colors';
 
-
 const { width } = Dimensions.get('window');
 const DAY_WIDTH = width / 5; // Pour afficher 5 jours sur l'écran
 
@@ -27,11 +26,11 @@ useEffect(() => {
   const checkTaken = async () => {
     if (medication) {
       medication.map(async med => {
-        const taken = await checkIfMedicationTaken(med.medicationId, med.date);
+        const taken = await checkIfMedicationTaken(med.id, med.date);
         if (taken) {
-          console.log(`Le médicament ${med.medicationId} a été pris.`);
+          console.log(`Le médicament ${med.id} a été pris.`);
         } else {
-          console.log(`Le médicament ${med.medicationId} n'a pas été pris.`);
+          console.log(`Le médicament ${med.id} n'a pas été pris.`);
         }
       });
     }
@@ -190,12 +189,11 @@ useEffect(() => {
                   <View style={styles.medicationsContainer}>
                     <ScrollView>
                       {
-                        medication && medication.length > 0 && (
+                        medication &&  (
                           medication
                             .filter(med => {
-                              console.log(med.isTaken);
-                              const startDate = new Date(med.startDate);        
-                              selectedDate.setHours(0, 0, 0, 0);
+                              const startDate = new Date(med.startDate);
+                              startDate.setHours(0, 0, 0, 0);
                               if (med.endDate) {
                                 const endDate = new Date(med.endDate);
                                 endDate.setHours(23, 59, 59, 999);

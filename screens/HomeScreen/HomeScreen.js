@@ -22,7 +22,7 @@ const HomeScreen = ({navigation}) => {
 
     const handleLogout = () => {
         GlobalData.user = null;
-        navigation.replace('Login');
+        navigation.replace('Onboarding');
     };
     
     const fetchMedicationsForToday = async () => {
@@ -72,25 +72,28 @@ const HomeScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
             <View style={styles.headerContainer}>
-                <TouchableOpacity onPress={handleLogout}>
+                <TouchableOpacity style={styles.headerContainerLogout} onPress={handleLogout}>
                     <Image
                         source={require('../../assets/images/deconnection.png')}
                         style={styles.image}
                     />
-                    <Text>Déconnexion</Text>
+                    <Text style={styles.logout}>Déconnexion</Text>
                 </TouchableOpacity>
                 <View style={styles.imageContainer}>
                     <Image
-                        source={require('../../assets/images/Maidika2.png')}
+                        source={require('../../assets/maidika_logo.png')}
                         style={[styles.image, styles.secondImage]}
                     />
+                </View>
+                <View style={styles.headerContainerLogout}>
                     <Switch
-                        trackColor={{ true: Colors.blue, true: "#767577" }}
+                        trackColor={{ false: Colors.lightGrey, true: Colors.lightGrey }}
                         thumbColor={toggle ? Colors.teal : Colors.blue}
-                        ios_backgroundColor="#3e3e3e"
+                        ios_backgroundColor="#D5D5D5"
                         onValueChange={handleToggle}
                         value={toggle}
                     />
+                    <Text style={styles.accessibilite}>{toggle ? 'Accessibilité: On' : 'Accessibilité: Off'}</Text>
                 </View>
             </View>
             <ScrollView style={styles.bodyContainer}>

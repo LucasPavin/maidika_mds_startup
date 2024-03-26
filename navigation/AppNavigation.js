@@ -112,7 +112,6 @@ function TabNavigator() {
                                 source={tab.source}
                                 style={{ 
                                     ...tab.styles_logo,
-                                    ...tab.styles_name,
                                     tintColor: focused ? '#496699' : "#44474B"
                                 }}
                             />
